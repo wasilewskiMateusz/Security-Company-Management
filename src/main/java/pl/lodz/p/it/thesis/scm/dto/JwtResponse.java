@@ -1,11 +1,11 @@
 package pl.lodz.p.it.thesis.scm.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class JwtResponse implements Serializable {
 
     @Getter

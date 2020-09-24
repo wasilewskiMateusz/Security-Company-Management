@@ -1,15 +1,15 @@
 package pl.lodz.p.it.thesis.scm.dto;
 
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 
 import java.io.Serializable;
 
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor(access=AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class JwtRequest implements Serializable {
 
     private String username;
