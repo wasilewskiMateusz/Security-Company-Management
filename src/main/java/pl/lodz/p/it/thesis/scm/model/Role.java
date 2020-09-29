@@ -1,9 +1,12 @@
 package pl.lodz.p.it.thesis.scm.model;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
+@Data
 public class Role {
 
     @Id
