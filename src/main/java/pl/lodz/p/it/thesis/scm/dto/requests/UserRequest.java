@@ -11,9 +11,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class UserRequest {
 
-    @NotNull
+    @NotNull(message = "field.ca.not.be.null")
     private String email;
 
-    @NotNull
+    @NotNull(message = "field.ca.not.be.null")
     private String password;
 }

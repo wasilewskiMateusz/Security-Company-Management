@@ -56,7 +56,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createUserIfNotFound("admin@edu.pl", "admin", new ArrayList<>(Collections.singletonList(adminRole)));
         User user = createUserIfNotFound("user@edu.pl",  "user", new ArrayList<>(Collections.singletonList(userRole)));
 
-
         alreadySetup = true;
 
 
