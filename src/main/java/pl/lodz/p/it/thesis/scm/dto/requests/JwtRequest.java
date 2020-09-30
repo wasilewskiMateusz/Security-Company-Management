@@ -1,4 +1,4 @@
-package pl.lodz.p.it.thesis.scm.dto;
+package pl.lodz.p.it.thesis.scm.dto.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

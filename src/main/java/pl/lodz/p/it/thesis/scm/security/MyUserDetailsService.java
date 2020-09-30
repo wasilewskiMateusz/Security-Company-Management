@@ -1,15 +1,13 @@
 package pl.lodz.p.it.thesis.scm.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.it.thesis.scm.db.RoleRepository;
-import pl.lodz.p.it.thesis.scm.db.UserRepository;
-import pl.lodz.p.it.thesis.scm.model.Privilege;
+import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
+import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.model.Role;
 import pl.lodz.p.it.thesis.scm.model.User;
 
@@ -40,23 +38,17 @@ public class MyUserDetailsService implements UserDetailsService {
                  true, getAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(Collection<Role> roles) {
-        return getGrantedAuthorities(getPrivileges(roles));
-    }
+    private Collection<? extends GrantedAuthority> getAuthorities(
+            Collection<Role> roles) {
+        List<GrantedAuthority> authorities
+                = new ArrayList<>();
+        for (Role role: roles) {
+            authorities.add(new SimpleGrantedAuthority(role.getName()));
+            role.getPrivileges().stream()
+                    .map(p -> new SimpleGrantedAuthority(p.getName()))
+                    .forEach(authorities::add);
+        }
 
-    private List<String> getPrivileges(Collection<Role> roles) {
-        List<String> privileges = new ArrayList<>();
-        List<Privilege> collection = new ArrayList<>();
-
-        roles.forEach(role -> collection.addAll(role.getPrivileges()));
-        collection.forEach(privilege -> privileges.add(privilege.getName()));
-
-        return privileges;
-    }
-
-    private Collection<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        privileges.forEach(privilege -> authorities.add(new SimpleGrantedAuthority(privilege)));
         return authorities;
     }
 }
