@@ -6,4 +6,5 @@ import pl.lodz.p.it.thesis.scm.model.Privilege;
 
 @Repository
 public interface PrivilegeRepository extends JpaRepository<Privilege, Long> {
+    Privilege findByName(String name);
 }
