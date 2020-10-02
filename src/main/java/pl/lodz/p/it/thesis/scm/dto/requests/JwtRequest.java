@@ -11,9 +11,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class JwtRequest implements Serializable {
 
-    @NotNull(message = "field.can.not.be.null")
+    @NotNull(message = "Email.not.null")
     private String email;
-    @NotNull(message = "field.can.not.be.null")
+    @NotNull(message = "Password.not.null")
     private String password;
 
 

@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class UserRequest {
 
-    @NotNull(message = "field.can.not.be.null")
+    @NotNull(message = "Email.not.null")
     private String email;
 
-    @NotNull(message = "field.can.not.be.null")
+    @NotNull(message = "Password.not.null")
     private String password;
 }

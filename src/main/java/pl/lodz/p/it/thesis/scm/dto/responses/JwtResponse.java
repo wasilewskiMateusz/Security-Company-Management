@@ -4,7 +4,7 @@ import lombok.Getter;
 
 
 @Getter
-public class JwtResponse extends SuccessResponse {
+public class JwtResponse {
 
     private final String token;
 
