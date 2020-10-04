@@ -9,7 +9,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.UserRequest;
 import pl.lodz.p.it.thesis.scm.dto.responses.AppResponse;
