@@ -47,17 +47,10 @@ public class AuthenticationController {
         authenticationService.registerNewUserAccount(userRequest);
         return new ResponseEntity<>(new SuccessResponse("success"), HttpStatus.OK);
     }
+
     @PostMapping("/authenticate")
     public ResponseEntity<JwtResponse> createAuthenticationToken(@Valid @RequestBody JwtRequest jwtRequest) {
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
-        } catch (DisabledException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN, "Account disabled", e);
-        } catch (BadCredentialsException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.UNAUTHORIZED, "Bad Credentials", e);
-        }
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);

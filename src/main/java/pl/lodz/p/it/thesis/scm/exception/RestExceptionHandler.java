@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +19,11 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
+
     private static final String UNEXPECTED_ERROR = "Exception.unexpected";
+    private static final String USER_DISABLED = "Exception.user.disabled";
+    private static final String BAD_CREDENTIALS = "Exception.bad.credentials";
+
     private final MessageSource messageSource;
 
     @Autowired
@@ -46,5 +52,16 @@ public class RestExceptionHandler {
         String errorMessage = messageSource.getMessage(UNEXPECTED_ERROR, null, locale);
         ex.printStackTrace();
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<RestMessage> handleDisabledException(Exception ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(USER_DISABLED, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.FORBIDDEN);
+    }
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<RestMessage> handleBadCredentialsException(Exception ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(BAD_CREDENTIALS, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.UNAUTHORIZED);
     }
 }
