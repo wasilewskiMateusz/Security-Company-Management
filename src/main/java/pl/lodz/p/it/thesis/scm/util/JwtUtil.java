@@ -21,6 +21,9 @@ public class JwtUtil {
     @Value("${jwt.expirationTimeInS}")
     private int expirationTimeInS;
 
+    @Value("${jwt.refreshExpirationDateInS}")
+    private int refreshExpirationDateInS;
+
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -42,9 +45,15 @@ public class JwtUtil {
     }
 
     private String doGenerateToken(Map<String, Object> claims, String subject) {
-
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTimeInS * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
+    }
+
+    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationDateInS * 1000))
+                .signWith(SignatureAlgorithm.HS256, secret).compact();
+
     }
 }

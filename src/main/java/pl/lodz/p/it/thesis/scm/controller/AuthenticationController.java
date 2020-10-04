@@ -1,5 +1,6 @@
 package pl.lodz.p.it.thesis.scm.controller;
 
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,10 @@ import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.implementation.AuthenticationService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class AuthenticationController {
@@ -54,6 +58,22 @@ public class AuthenticationController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponse(jwt));
+    }
+
+    @GetMapping("/refreshtoken")
+    public ResponseEntity<?> refreshToken(HttpServletRequest httpServletRequest){
+        DefaultClaims claims = (DefaultClaims) httpServletRequest.getAttribute("claims");
+        Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
+        String token = jwtUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());
+        return ResponseEntity.ok(new JwtResponse(token));
+    }
+
+    private Map<String, Object> getMapFromIoJsonwebtokenClaims(DefaultClaims claims) {
+        Map<String, Object> expectedMap = new HashMap<>();
+        for (Map.Entry<String, Object> entry : claims.entrySet()) {
+            expectedMap.put(entry.getKey(), entry.getValue());
+        }
+        return expectedMap;
     }
 
 }
