@@ -10,10 +10,12 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import pl.lodz.p.it.thesis.scm.dto.requests.JwtRefreshRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.UserRequest;
 import pl.lodz.p.it.thesis.scm.dto.responses.AppResponse;
-import pl.lodz.p.it.thesis.scm.dto.responses.JwtResponse;
+import pl.lodz.p.it.thesis.scm.dto.responses.JwtAuthenticateResponse;
+import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.SuccessResponse;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.implementation.AuthenticationService;
@@ -52,28 +54,23 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<JwtResponse> createAuthenticationToken(@Valid @RequestBody JwtRequest jwtRequest) {
+    public ResponseEntity<JwtAuthenticateResponse> createAuthenticationToken(@Valid @RequestBody JwtRequest jwtRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
-        final String jwt = jwtUtil.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(jwt));
+        final String accessToken = jwtUtil.generateAccessToken(userDetails);
+        final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        return ResponseEntity.ok(new JwtAuthenticateResponse(accessToken, refreshToken));
     }
 
-    @GetMapping("/refreshtoken")
-    public ResponseEntity<?> refreshToken(HttpServletRequest httpServletRequest){
-        DefaultClaims claims = (DefaultClaims) httpServletRequest.getAttribute("claims");
-        Map<String, Object> expectedMap = getMapFromIoJsonwebtokenClaims(claims);
-        String token = jwtUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());
-        return ResponseEntity.ok(new JwtResponse(token));
+    @PostMapping("/refresh")
+    public ResponseEntity<JwtRefreshResponse> refreshToken(@RequestBody JwtRefreshRequest jwtRefreshRequest){
+
+        String username = jwtUtil.getUsernameFromToken(jwtRefreshRequest.getRefreshToken());
+        final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        final String accessToken = jwtUtil.generateAccessToken(userDetails);
+        return ResponseEntity.ok(new JwtRefreshResponse(accessToken));
     }
 
-    private Map<String, Object> getMapFromIoJsonwebtokenClaims(DefaultClaims claims) {
-        Map<String, Object> expectedMap = new HashMap<>();
-        for (Map.Entry<String, Object> entry : claims.entrySet()) {
-            expectedMap.put(entry.getKey(), entry.getValue());
-        }
-        return expectedMap;
-    }
 
 }
