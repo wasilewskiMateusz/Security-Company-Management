@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
@@ -33,7 +34,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(RestException.class)
     public ResponseEntity<RestMessage> handleIllegalArgument(RestException ex, Locale locale) {
-        String errorMessage = messageSource.getMessage(ex.getMessage(), ex.getArgs(), locale);
+        String errorMessage = messageSource.getMessage(ex.getMessage(), null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.BAD_REQUEST);
     }
 

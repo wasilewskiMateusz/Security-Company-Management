@@ -7,5 +7,4 @@ import lombok.Getter;
 @AllArgsConstructor
 public class RestException extends RuntimeException{
     private final String message;
-    private final Object[] args;
 }

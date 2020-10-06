@@ -1,15 +1,14 @@
 package pl.lodz.p.it.thesis.scm.controller;
 
-import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRefreshRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.UserRequest;
@@ -17,14 +16,12 @@ import pl.lodz.p.it.thesis.scm.dto.responses.AppResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtAuthenticateResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.SuccessResponse;
+import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.implementation.AuthenticationService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 public class AuthenticationController {
@@ -60,6 +57,7 @@ public class AuthenticationController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        authenticationService.registerRefreshToken(refreshToken, jwtRequest.getEmail());
         return ResponseEntity.ok(new JwtAuthenticateResponse(accessToken, refreshToken));
     }
 
@@ -67,6 +65,9 @@ public class AuthenticationController {
     public ResponseEntity<JwtRefreshResponse> refreshToken(@RequestBody JwtRefreshRequest jwtRefreshRequest){
 
         String username = jwtUtil.getUsernameFromToken(jwtRefreshRequest.getRefreshToken());
+        if(!authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)){
+            throw new RestException("Token does not exist");
+        }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
         return ResponseEntity.ok(new JwtRefreshResponse(accessToken));

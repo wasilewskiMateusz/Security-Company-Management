@@ -2,6 +2,7 @@ package pl.lodz.p.it.thesis.scm.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -9,6 +10,7 @@ import java.util.Collection;
 @Entity
 @Data
 @NoArgsConstructor
+@ToString(exclude= {"refreshTokens", "roles"})
 public class User {
 
     @Id
@@ -31,5 +33,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<RefreshToken> refreshTokens;
 
 }
