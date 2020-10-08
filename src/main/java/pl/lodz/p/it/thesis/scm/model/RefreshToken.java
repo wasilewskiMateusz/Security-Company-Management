@@ -19,7 +19,7 @@ public class RefreshToken {
     private String token;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(referencedColumnName = "id")
     private User user;
 
     public RefreshToken(String token, User user){

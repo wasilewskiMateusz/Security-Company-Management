@@ -11,6 +11,7 @@ import java.util.Collection;
 @Data
 @NoArgsConstructor
 @ToString(exclude= {"refreshTokens", "roles"})
+@SecondaryTable(name="personal_data", pkJoinColumns = @PrimaryKeyJoinColumn(name="id"))
 public class User {
 
     @Id
@@ -36,5 +37,14 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Collection<RefreshToken> refreshTokens;
+
+    @Embedded
+    private PersonalData personalData;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<Rate> rates;
+
+    @OneToMany(mappedBy = "user")
+    private Collection<Contract> contracts;
 
 }

@@ -1,6 +1,5 @@
 package pl.lodz.p.it.thesis.scm.model;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

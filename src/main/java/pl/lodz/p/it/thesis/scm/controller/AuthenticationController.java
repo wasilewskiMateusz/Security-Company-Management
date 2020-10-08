@@ -66,7 +66,7 @@ public class AuthenticationController {
 
         String username = jwtUtil.getUsernameFromToken(jwtRefreshRequest.getRefreshToken());
         if(!authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)){
-            throw new RestException("Token does not exist");
+            throw new RestException("Exception.refresh.token.is.not.valid");
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
