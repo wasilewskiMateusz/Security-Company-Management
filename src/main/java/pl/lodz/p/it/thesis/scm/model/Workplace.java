@@ -34,4 +34,8 @@ public class Workplace {
 
     @OneToMany(mappedBy = "workplace")
     private Collection<Rate> jobs;
+
+    @ManyToOne
+    @JoinColumn(referencedColumnName = "id")
+    private User owner;
 }

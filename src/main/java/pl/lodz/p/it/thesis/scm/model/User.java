@@ -1,6 +1,7 @@
 package pl.lodz.p.it.thesis.scm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -10,8 +11,9 @@ import java.util.Collection;
 @Entity
 @Data
 @NoArgsConstructor
-@ToString(exclude= {"refreshTokens", "roles"})
-@SecondaryTable(name="personal_data", pkJoinColumns = @PrimaryKeyJoinColumn(name="id"))
+@ToString(exclude= {"refreshTokens", "roles", "workplaces"})
+@EqualsAndHashCode(exclude= {"refreshTokens", "roles", "workplaces"})
+@SecondaryTable(name = "personal_data", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
 public class User {
 
     @Id
@@ -46,5 +48,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Collection<Contract> contracts;
+
+    @OneToMany(mappedBy = "owner")
+    private Collection<Workplace> workplaces;
 
 }

@@ -1,11 +1,15 @@
 package pl.lodz.p.it.thesis.scm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@ToString(exclude= {"status", "user","job"})
+@EqualsAndHashCode(exclude= {"status", "user","job"})
 public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

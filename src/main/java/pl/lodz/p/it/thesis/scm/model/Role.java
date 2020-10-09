@@ -1,7 +1,9 @@
 package pl.lodz.p.it.thesis.scm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -9,6 +11,8 @@ import java.util.Collection;
 @Entity
 @Data
 @NoArgsConstructor
+@ToString(exclude= {"users", "privileges"})
+@EqualsAndHashCode(exclude= {"users", "privileges"})
 public class Role {
 
     @Id
