@@ -34,11 +34,11 @@ public class WorkplaceDTO {
     public static Workplace toWorkplace(WorkplaceDTO workplaceDTO) {
         Workplace workplace = new Workplace();
         workplace.setId(workplaceDTO.getId());
-        workplace.setName(workplace.getName());
+        workplace.setName(workplaceDTO.getName());
         workplace.setDescription(workplaceDTO.getDescription());
         workplace.setAddress(workplaceDTO.getAddress());
-        workplace.setEnable(workplace.isEnable());
-        workplace.setAverageRate(workplace.getAverageRate());
+        workplace.setEnable(workplaceDTO.isEnable());
+        workplace.setAverageRate(workplaceDTO.getAverageRate());
         return workplace;
     }
 }

@@ -49,7 +49,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Collection<Contract> contracts;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "employer")
     private Collection<Workplace> workplaces;
 
 }

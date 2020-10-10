@@ -15,7 +15,7 @@ public class CreateWorkplaceDTO {
 
     private String address;
 
-    private Long ownerId;
+    private Long employerId;
 
 
     public static Workplace toWorkplace(CreateWorkplaceDTO workplaceDTO) {

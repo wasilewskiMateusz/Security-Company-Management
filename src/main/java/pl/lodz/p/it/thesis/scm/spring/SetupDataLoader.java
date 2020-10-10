@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import pl.lodz.p.it.thesis.scm.model.Privilege;
 import pl.lodz.p.it.thesis.scm.model.Role;
 import pl.lodz.p.it.thesis.scm.model.User;
-import pl.lodz.p.it.thesis.scm.repository.PrivilegeRepository;
+import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
+import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -26,17 +26,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private final RoleRepository roleRepository;
 
-    private final PrivilegeRepository privilegeRepository;
-
     private final PasswordEncoder passwordEncoder;
+
+    private final WorkplaceRepository workplaceRepository;
 
     @Autowired
     public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository,
-                           PrivilegeRepository privilegeRepository, PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, WorkplaceRepository workplaceRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.privilegeRepository = privilegeRepository;
         this.passwordEncoder = passwordEncoder;
+        this.workplaceRepository = workplaceRepository;
     }
 
     @Override
@@ -44,17 +44,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (alreadySetup) return;
 
-        Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
-        Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
-
-        final List<Privilege> adminPrivileges = Arrays.asList(readPrivilege, writePrivilege);
-        final List<Privilege> userPrivileges = new ArrayList<>(Collections.singletonList(readPrivilege));
-
-        Role adminRole = createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        Role userRole = createRoleIfNotFound("ROLE_USER", userPrivileges);
+        Role adminRole = createRoleIfNotFound("ROLE_ADMIN");
+        Role employerRole = createRoleIfNotFound("ROLE_EMPLOYER");
+        Role employeeRole = createRoleIfNotFound("ROLE_EMPLOYEE");
 
         createUserIfNotFound("admin@edu.pl", "admin", new ArrayList<>(Collections.singletonList(adminRole)));
-        User user = createUserIfNotFound("user@edu.pl",  "user", new ArrayList<>(Collections.singletonList(userRole)));
+        User employer = createUserIfNotFound("employer@edu.pl", "employer", new ArrayList<>(Collections.singletonList(employerRole)));
+        User employee = createUserIfNotFound("employee@edu.pl",  "employee", new ArrayList<>(Collections.singletonList(employeeRole)));
+
+        Workplace workplace = createWorkPlaceIfNotFound("Lordis club", "Best sound club", "Piotrkowska 101", true, 5.0, employer);
+
 
         alreadySetup = true;
 
@@ -62,23 +61,33 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    Privilege createPrivilegeIfNotFound(final String name) {
+    Workplace createWorkPlaceIfNotFound(final String name,
+                                        final String description,
+                                        final String address,
+                                        final boolean enable,
+                                        final Double avgRate,
+                                        final User employer) {
 
-        Privilege privilege = privilegeRepository.findByName(name);
-        if (privilege == null) {
-            privilege = new Privilege(name);
-            privilegeRepository.save(privilege);
+        Workplace workplace = workplaceRepository.findByName(name);
+        if (workplace == null) {
+            workplace = new Workplace();
+            workplace.setName(name);
+            workplace.setDescription(description);
+            workplace.setAddress(address);
+            workplace.setEnable(enable);
+            workplace.setAverageRate(avgRate);
+            workplace.setEmployer(employer);
+            workplaceRepository.save(workplace);
         }
-        return privilege;
+        return workplace;
     }
 
     @Transactional
-    Role createRoleIfNotFound(final String name, final Collection<Privilege> privileges) {
+    Role createRoleIfNotFound(final String name) {
         Role role = roleRepository.findByName(name);
         if (role == null) {
             role = new Role(name);
         }
-        role.setPrivileges(privileges);
         role = roleRepository.save(role);
         return role;
     }

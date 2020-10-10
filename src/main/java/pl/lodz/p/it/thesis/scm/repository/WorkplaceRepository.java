@@ -6,4 +6,5 @@ import pl.lodz.p.it.thesis.scm.model.Workplace;
 
 @Repository
 public interface WorkplaceRepository extends JpaRepository<Workplace, Long> {
+    Workplace findByName(String name);
 }

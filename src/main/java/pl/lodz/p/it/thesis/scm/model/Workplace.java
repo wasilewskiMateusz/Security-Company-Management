@@ -37,5 +37,5 @@ public class Workplace {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
-    private User owner;
+    private User employer;
 }

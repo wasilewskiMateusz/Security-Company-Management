@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/workplaces")
+@RequestMapping("workplaces")
 public class WorkplaceController {
 
     private final IWorkplaceService workplaceService;
@@ -62,12 +62,12 @@ public class WorkplaceController {
         Workplace workplace = CreateWorkplaceDTO.toWorkplace(createWorkplaceDTO);
         workplace.setAverageRate(0.);
         workplace.setEnable(false);
-        Optional<User> user = userService.getUser(createWorkplaceDTO.getOwnerId());
+        Optional<User> user = userService.getUser(createWorkplaceDTO.getEmployerId());
         //TODO sprawdzanie roli
         if(user.isEmpty()){
             throw new RestException("Exception.workplace.owner.id.not.found");
         }
-        workplace.setOwner(user.get());
+        workplace.setEmployer(user.get());
         Workplace addedWorkplace = workplaceService.addWorkplace(workplace);
         return ResponseEntity.ok(new WorkplaceDTO(addedWorkplace));
     }
