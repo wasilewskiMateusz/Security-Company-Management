@@ -2,6 +2,7 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -28,8 +29,13 @@ public class UserService implements IUserService {
         return userRepository.findAll();
     }
 
-    public User editUser(User user){
-        if(userRepository.findById(user.getId()).isPresent()){
+    public User editUser(UserDTO userDTO){
+        Optional<User> userToEdit = userRepository.findById(userDTO.getId());
+        if(userToEdit.isPresent()){
+            User user = userToEdit.get();
+            user.setName(userDTO.getName());
+            user.setLastName(userDTO.getLastName());
+            user.setPhoneNumber(userDTO.getPhoneNumber());
             return userRepository.save(user);
         }
         else return null;

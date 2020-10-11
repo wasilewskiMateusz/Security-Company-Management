@@ -20,20 +20,20 @@ public class UserDTO {
         this.id = user.getId();
         this.email = user.getEmail();
         this.enabled = user.isEnabled();
-        this.name = user.getPersonalData().getName();
-        this.lastName = user.getPersonalData().getLastName();
-        this.phoneNumber = user.getPersonalData().getPhoneNumber();
+        this.name = user.getName();
+        this.lastName = user.getLastName();
+        this.phoneNumber = user.getPhoneNumber();
 
     }
 
     public static User toUser(UserDTO userDTO) {
         User user = new User();
         user.setId(userDTO.getId());
-        user.setEmail(user.getEmail());
+        user.setEmail(userDTO.getEmail());
         user.setEnabled(userDTO.isEnabled());
-        user.getPersonalData().setName(userDTO.getName());
-        user.getPersonalData().setLastName(userDTO.getLastName());
-        user.getPersonalData().setPhoneNumber(userDTO.getPhoneNumber());
+        user.setName(userDTO.getName());
+        user.setLastName(userDTO.getLastName());
+        user.setPhoneNumber(userDTO.getPhoneNumber());
         return user;
     }
 }

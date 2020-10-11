@@ -51,6 +51,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/register").permitAll()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers("/refresh").permitAll()
+                .antMatchers("/users").hasRole("ADMIN")
+                .antMatchers("/users/{id}/**").access("@userSecurity.hasUserId(authentication,#id)")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

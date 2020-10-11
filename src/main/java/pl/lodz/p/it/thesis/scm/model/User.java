@@ -13,7 +13,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @ToString(exclude= {"refreshTokens", "roles", "workplaces"})
 @EqualsAndHashCode(exclude= {"refreshTokens", "roles", "workplaces"})
-@SecondaryTable(name = "personal_data", pkJoinColumns = @PrimaryKeyJoinColumn(name = "id"))
+@SecondaryTable(name = "personal_data")
 public class User {
 
     @Id
@@ -28,6 +28,15 @@ public class User {
 
     private boolean enabled;
 
+    @Column(table = "personal_data")
+    private String name;
+
+    @Column(table = "personal_data")
+    private String lastName;
+
+    @Column(table = "personal_data")
+    private String phoneNumber;
+
     @ManyToMany
     @JoinTable(
             name = "users_roles",
@@ -39,9 +48,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Collection<RefreshToken> refreshTokens;
-
-    @Embedded
-    private PersonalData personalData;
 
     @OneToMany(mappedBy = "user")
     private Collection<Rate> rates;

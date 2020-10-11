@@ -48,9 +48,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Role employerRole = createRoleIfNotFound("ROLE_EMPLOYER");
         Role employeeRole = createRoleIfNotFound("ROLE_EMPLOYEE");
 
-        createUserIfNotFound("admin@edu.pl", "admin", new ArrayList<>(Collections.singletonList(adminRole)));
-        User employer = createUserIfNotFound("employer@edu.pl", "employer", new ArrayList<>(Collections.singletonList(employerRole)));
-        User employee = createUserIfNotFound("employee@edu.pl",  "employee", new ArrayList<>(Collections.singletonList(employeeRole)));
+        createUserIfNotFound("admin@edu.pl", "admin", new ArrayList<>(Collections.singletonList(adminRole)), "Mateusz", "Wasilewski", "530060645");
+        User employer = createUserIfNotFound("employer@edu.pl", "employer", new ArrayList<>(Collections.singletonList(employerRole)), "Jan", "Kowalski", "123456789");
+        User employee = createUserIfNotFound("employee@edu.pl",  "employee", new ArrayList<>(Collections.singletonList(employeeRole)), "Szymon", "Tarwid", "111222333");
 
         Workplace workplace = createWorkPlaceIfNotFound("Lordis club", "Best sound club", "Piotrkowska 101", true, 5.0, employer);
 
@@ -93,13 +93,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     }
 
     @Transactional
-    User createUserIfNotFound(final String login, final String password, final Collection<Role> roles) {
+    User createUserIfNotFound(final String login, final String password,
+                              final Collection<Role> roles, final String name,
+                              final String lastName, final String phoneNumber) {
         User user = userRepository.findByEmail(login);
         if (user == null) {
             user = new User();
             user.setEmail(login);
             user.setEnabled(true);
             user.setPassword(passwordEncoder.encode(password));
+            user.setName(name);
+            user.setLastName(lastName);
+            user.setPhoneNumber(phoneNumber);
         }
         user.setRoles(roles);
         user = userRepository.save(user);

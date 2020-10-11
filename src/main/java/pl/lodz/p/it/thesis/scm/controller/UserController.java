@@ -45,10 +45,9 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity<UserDTO> editWorkplace(@Valid @RequestBody UserDTO userDTO) {
-        User user = UserDTO.toUser(userDTO);
-        User editedUser = userService.editUser(user);
+        User editedUser = userService.editUser(userDTO);
         if(editedUser == null) {
-            throw new RestException("Exception.not.found.user.to.edit");
+            throw new RestException("Exception.user.not.found");
         }
         return ResponseEntity.ok(new UserDTO(editedUser));
     }

@@ -1,5 +1,6 @@
 package pl.lodz.p.it.thesis.scm.service;
 
+import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.model.User;
 
 import java.util.List;
@@ -9,5 +10,5 @@ public interface IUserService {
 
     Optional<User> getUser(Long id);
     List<User> getAllUsers();
-    User editUser(User user);
+    User editUser(UserDTO userDTO);
 }
