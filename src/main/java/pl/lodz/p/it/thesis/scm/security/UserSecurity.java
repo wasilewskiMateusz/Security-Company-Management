@@ -1,27 +1,27 @@
 package pl.lodz.p.it.thesis.scm.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import pl.lodz.p.it.thesis.scm.service.implementation.UserService;
-import pl.lodz.p.it.thesis.scm.util.JwtUtil;
+import pl.lodz.p.it.thesis.scm.model.User;
+import pl.lodz.p.it.thesis.scm.repository.UserRepository;
+
 
 @Component
 public class UserSecurity {
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
 
-    @SuppressWarnings("unused")
-    public UserSecurity() {
-        this(null);
-    }
-    public UserSecurity(JwtUtil jwtUtil,) {
-        this.jwtUtil = jwtUtil;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserSecurity(UserRepository userService) {
+        this.userRepository = userService;
     }
 
     public boolean hasUserId(Authentication authentication, Long id) {
-        String token = (String) authentication.getCredentials();
-        String username = jwtUtil.getUsernameFromToken(token);
-        return username.equals(id);
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email);
+        return user.getId().equals(id);
 
     }
 }

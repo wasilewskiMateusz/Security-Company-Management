@@ -29,8 +29,8 @@ public class UserService implements IUserService {
         return userRepository.findAll();
     }
 
-    public User editUser(UserDTO userDTO){
-        Optional<User> userToEdit = userRepository.findById(userDTO.getId());
+    public User editUser(UserDTO userDTO, Long id){
+        Optional<User> userToEdit = userRepository.findById(id);
         if(userToEdit.isPresent()){
             User user = userToEdit.get();
             user.setName(userDTO.getName());

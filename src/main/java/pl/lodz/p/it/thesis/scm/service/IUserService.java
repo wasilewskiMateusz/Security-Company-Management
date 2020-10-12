@@ -10,5 +10,5 @@ public interface IUserService {
 
     Optional<User> getUser(Long id);
     List<User> getAllUsers();
-    User editUser(UserDTO userDTO);
+    User editUser(UserDTO userDTO, Long id);
 }

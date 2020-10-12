@@ -2,6 +2,7 @@ package pl.lodz.p.it.thesis.scm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
@@ -43,9 +44,9 @@ public class UserController {
         return ResponseEntity.ok(usersDTOS);
     }
 
-    @PutMapping
-    public ResponseEntity<UserDTO> editWorkplace(@Valid @RequestBody UserDTO userDTO) {
-        User editedUser = userService.editUser(userDTO);
+    @PutMapping("{id}")
+    public ResponseEntity<UserDTO> editWorkplace(@Valid @RequestBody UserDTO userDTO, @PathVariable Long id) {
+        User editedUser = userService.editUser(userDTO, id);
         if(editedUser == null) {
             throw new RestException("Exception.user.not.found");
         }
