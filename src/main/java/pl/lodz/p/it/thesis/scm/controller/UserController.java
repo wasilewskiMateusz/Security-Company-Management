@@ -2,13 +2,10 @@ package pl.lodz.p.it.thesis.scm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
-import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
 
 import javax.validation.Valid;
@@ -17,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("users")
 public class UserController {
 
