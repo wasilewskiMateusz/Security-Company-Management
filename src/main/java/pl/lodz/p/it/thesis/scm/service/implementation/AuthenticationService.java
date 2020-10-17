@@ -61,7 +61,11 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public boolean checkIfTokenExists(String refreshToken, String email){
         List<RefreshToken> tokenList = refreshTokenRepository.findByUserEmail(email);
-        return tokenList.stream().anyMatch(token -> passwordEncoder.encode(token.getToken()).equals(refreshToken));
+        return tokenList.stream().noneMatch(token -> passwordEncoder.encode(token.getToken()).equals(refreshToken));
+    }
+
+    public void logout(String refreshToken){
+        refreshTokenRepository.deleteByToken(passwordEncoder.encode(refreshToken));
     }
 
     private boolean emailExists(String email) {

@@ -67,12 +67,25 @@ public class AuthenticationController {
     public ResponseEntity<JwtRefreshResponse> refreshToken(@RequestBody JwtRefreshRequest jwtRefreshRequest){
 
         String username = jwtUtil.getUsernameFromToken(jwtRefreshRequest.getRefreshToken());
-        if(!authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)){
+        if(authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)){
             throw new RestException("Exception.refresh.token.is.not.valid");
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
         return ResponseEntity.ok(new JwtRefreshResponse(accessToken));
+    }
+
+    @PostMapping("/logout")
+    public String logout(@RequestBody JwtRefreshRequest jwtRefreshRequest){
+
+        String username = jwtUtil.getUsernameFromToken(jwtRefreshRequest.getRefreshToken());
+        if(authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)){
+            throw new RestException("Exception.refresh.token.is.not.valid");
+        }
+
+        authenticationService.logout(jwtRefreshRequest.getRefreshToken());
+
+        return "User logged out";
     }
 
 

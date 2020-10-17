@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     List<RefreshToken> findByUserEmail(String user);
+    void deleteByToken(String token);
 }
