@@ -18,9 +18,6 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.refresh.secret}")
-    private String secretRefresh;
-
     @Value("${jwt.expirationTimeInS}")
     private int expirationTimeInS;
 
@@ -59,7 +56,7 @@ public class JwtUtil {
     public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationDateInS * 1000))
-                .signWith(SignatureAlgorithm.HS256, secretRefresh).compact();
+                .signWith(SignatureAlgorithm.HS256, secret).compact();
 
     }
 }

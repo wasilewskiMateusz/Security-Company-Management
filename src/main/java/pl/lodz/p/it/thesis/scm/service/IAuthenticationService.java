@@ -7,5 +7,5 @@ public interface IAuthenticationService {
     void registerNewUserAccount(UserRequest userRequest);
     void registerRefreshToken(String refreshToken, String email);
     boolean checkIfTokenExists(String refreshToken, String email);
-    void logout(String refreshToken);
+    void logout(String refreshToken, String email);
 }

@@ -24,7 +24,6 @@ import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 
 import javax.validation.Valid;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class AuthenticationController {
 
@@ -75,17 +74,15 @@ public class AuthenticationController {
         return ResponseEntity.ok(new JwtRefreshResponse(accessToken));
     }
 
-    @PostMapping("/logout")
-    public String logout(@RequestBody JwtRefreshRequest jwtRefreshRequest){
+    @PostMapping("/removeToken")
+    public ResponseEntity<JwtRefreshResponse> logout(@RequestBody JwtRefreshRequest jwtRefreshRequest){
 
         String username = jwtUtil.getUsernameFromToken(jwtRefreshRequest.getRefreshToken());
         if(authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)){
             throw new RestException("Exception.refresh.token.is.not.valid");
         }
-
-        authenticationService.logout(jwtRefreshRequest.getRefreshToken());
-
-        return "User logged out";
+        authenticationService.logout(jwtRefreshRequest.getRefreshToken(), username);
+        return ResponseEntity.ok(new JwtRefreshResponse("accessToken"));
     }
 
 

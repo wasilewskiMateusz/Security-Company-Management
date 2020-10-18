@@ -11,6 +11,7 @@ import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,12 +61,18 @@ public class AuthenticationService implements IAuthenticationService {
 
     @Override
     public boolean checkIfTokenExists(String refreshToken, String email){
-        List<RefreshToken> tokenList = refreshTokenRepository.findByUserEmail(email);
-        return tokenList.stream().noneMatch(token -> passwordEncoder.encode(token.getToken()).equals(refreshToken));
+        List<RefreshToken> userTokenList = refreshTokenRepository.findByUserEmail(email);
+        return userTokenList.stream().noneMatch(token -> passwordEncoder.matches(refreshToken, token.getToken()));
     }
 
-    public void logout(String refreshToken){
-        refreshTokenRepository.deleteByToken(passwordEncoder.encode(refreshToken));
+    @Override
+    public void logout(String refreshToken, String email){
+        List<RefreshToken> userTokenList = refreshTokenRepository.findByUserEmail(email);
+        for(RefreshToken rToken: userTokenList){
+            if(passwordEncoder.matches(refreshToken, rToken.getToken())){
+                refreshTokenRepository.deleteById(rToken.getId());
+            }
+        }
     }
 
     private boolean emailExists(String email) {
