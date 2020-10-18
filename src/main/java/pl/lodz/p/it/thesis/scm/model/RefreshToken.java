@@ -3,6 +3,7 @@ package pl.lodz.p.it.thesis.scm.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -22,9 +23,12 @@ public class RefreshToken {
     @JoinColumn(referencedColumnName = "id")
     private User user;
 
-    public RefreshToken(String token, User user){
+    private LocalDateTime expiryDate;
+
+    public RefreshToken(String token, User user, LocalDateTime expiryDate){
         this.token = token;
         this.user = user;
+        this.expiryDate = expiryDate;
     }
 
 }

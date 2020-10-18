@@ -12,6 +12,7 @@ import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -53,16 +54,16 @@ public class AuthenticationService implements IAuthenticationService {
     }
 
     @Override
-    public void registerRefreshToken(String refreshToken, String email){
+    public void registerRefreshToken(String refreshToken, String email, LocalDateTime expirationTime){
         User user = userRepository.findByEmail(email);
-        RefreshToken token = new RefreshToken(passwordEncoder.encode(refreshToken), user);
+        RefreshToken token = new RefreshToken(passwordEncoder.encode(refreshToken), user, expirationTime);
         refreshTokenRepository.save(token);
     }
 
     @Override
     public boolean checkIfTokenExists(String refreshToken, String email){
         List<RefreshToken> userTokenList = refreshTokenRepository.findByUserEmail(email);
-        return userTokenList.stream().noneMatch(token -> passwordEncoder.matches(refreshToken, token.getToken()));
+        return userTokenList.stream().anyMatch(token -> passwordEncoder.matches(refreshToken, token.getToken()));
     }
 
     @Override
