@@ -3,7 +3,9 @@ package pl.lodz.p.it.thesis.scm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
+import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -14,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("users")
 public class UserController {
 
@@ -31,7 +32,8 @@ public class UserController {
         if (user.isEmpty()) {
             throw new RestException("Exception.user.not.found");
         }
-        return ResponseEntity.ok(new UserDTO(user.get()));
+        Long version = user.get().getVersion();
+        return ResponseEntity.ok().eTag("\"" + version + "\"").body(new UserDTO(user.get()));
     }
 
     @GetMapping
@@ -43,12 +45,26 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserDTO> editWorkplace(@Valid @RequestBody UserDTO userDTO, @PathVariable Long id) {
-        User editedUser = userService.editUser(userDTO, id);
-        if(editedUser == null) {
+    public ResponseEntity<UserEditDTO> editWorkplace(WebRequest request, @Valid @RequestBody UserEditDTO userEditDTO, @PathVariable Long id) {
+        String ifMatchValue = request.getHeader("If-Match");
+
+        Optional<User> userToEdit = userService.getUser(id);
+
+        if(userToEdit.isEmpty()) {
             throw new RestException("Exception.user.not.found");
         }
-        return ResponseEntity.ok(new UserDTO(editedUser));
+
+        if(ifMatchValue == null){
+            throw new RestException("No header");
+        }
+
+        if(!ifMatchValue.equals(userToEdit.get().getVersion().toString())){
+            throw new RestException("Etag changed");
+        }
+
+        User editedUser = userService.editUser(userToEdit.get(), userEditDTO);
+
+        return ResponseEntity.ok(new UserEditDTO(editedUser));
     }
 
 }

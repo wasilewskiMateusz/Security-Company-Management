@@ -9,12 +9,14 @@ import java.util.Collection;
 
 @Data
 @Entity
-@ToString(exclude= {"users", "privileges"})
-@EqualsAndHashCode(exclude= {"users", "privileges"})
+@ToString(exclude= {"contracts"})
+@EqualsAndHashCode(exclude= {"contracts"})
 public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private @Version Long version;
 
     private String name;
 

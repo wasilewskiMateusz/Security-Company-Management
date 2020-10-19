@@ -15,6 +15,8 @@ public class Rate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private @Version Long version;
+
     private int value;
 
     @ManyToOne(optional=false)

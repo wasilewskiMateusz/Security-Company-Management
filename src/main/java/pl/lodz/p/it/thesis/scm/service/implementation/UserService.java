@@ -1,8 +1,11 @@
 package pl.lodz.p.it.thesis.scm.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
+import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
+import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -29,15 +32,11 @@ public class UserService implements IUserService {
         return userRepository.findAll();
     }
 
-    public User editUser(UserDTO userDTO, Long id){
-        Optional<User> userToEdit = userRepository.findById(id);
-        if(userToEdit.isPresent()){
-            User user = userToEdit.get();
-            user.setName(userDTO.getName());
-            user.setLastName(userDTO.getLastName());
-            user.setPhoneNumber(userDTO.getPhoneNumber());
-            return userRepository.save(user);
-        }
-        else return null;
+    public User editUser(User userToEdit, UserEditDTO userEditDTO){
+
+            userToEdit.setName(userEditDTO.getName());
+            userToEdit.setLastName(userEditDTO.getLastName());
+            userToEdit.setPhoneNumber(userEditDTO.getPhoneNumber());
+            return userRepository.save(userToEdit);
     }
 }

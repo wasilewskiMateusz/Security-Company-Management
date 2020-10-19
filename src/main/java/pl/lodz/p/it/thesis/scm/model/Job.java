@@ -18,6 +18,8 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private @Version Long version;
+
     private int vacancy;
 
     private LocalDateTime startDate;

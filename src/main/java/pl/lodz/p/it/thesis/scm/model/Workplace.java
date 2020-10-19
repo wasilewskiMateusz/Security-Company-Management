@@ -18,6 +18,8 @@ public class Workplace {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private @Version Long version;
+
     private String name;
 
     private String description;

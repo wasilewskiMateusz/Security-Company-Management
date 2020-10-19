@@ -3,6 +3,7 @@ package pl.lodz.p.it.thesis.scm.exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -24,6 +25,7 @@ public class RestExceptionHandler {
     private static final String UNEXPECTED_ERROR = "Exception.unexpected";
     private static final String USER_DISABLED = "Exception.user.disabled";
     private static final String BAD_CREDENTIALS = "Exception.bad.credentials";
+    private static final String OPTIMISTIC_LOCK = "Exception.optimistic.lock";
 
     private final MessageSource messageSource;
 
@@ -64,5 +66,10 @@ public class RestExceptionHandler {
     public ResponseEntity<RestMessage> handleBadCredentialsException(Exception ex, Locale locale) {
         String errorMessage = messageSource.getMessage(BAD_CREDENTIALS, null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.UNAUTHORIZED);
+    }
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    public ResponseEntity<RestMessage> handleOptimisticLockingFailureException(Exception ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(OPTIMISTIC_LOCK, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.CONFLICT);
     }
 }

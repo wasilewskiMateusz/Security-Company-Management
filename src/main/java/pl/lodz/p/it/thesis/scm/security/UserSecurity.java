@@ -7,7 +7,7 @@ import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 
 
-@Component
+@Component("userSecurity")
 public class UserSecurity {
 
     private final UserRepository userRepository;
@@ -20,8 +20,10 @@ public class UserSecurity {
     public boolean hasUserId(Authentication authentication, Long id) {
 
         String email = authentication.getName();
+        if(email.equals("anonymousUser")) return false;
         User user = userRepository.findByEmail(email);
         return user.getId().equals(id);
+
 
     }
 }

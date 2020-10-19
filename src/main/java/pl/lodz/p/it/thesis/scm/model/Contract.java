@@ -15,6 +15,8 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private @Version Long version;
+
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
     private Status status;

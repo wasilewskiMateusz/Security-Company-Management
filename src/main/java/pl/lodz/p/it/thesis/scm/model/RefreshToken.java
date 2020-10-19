@@ -16,6 +16,7 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private  @Version Long version;
 
     private String token;
 
