@@ -25,7 +25,7 @@ public class RestExceptionHandler {
     private static final String UNEXPECTED_ERROR = "Exception.unexpected";
     private static final String USER_DISABLED = "Exception.user.disabled";
     private static final String BAD_CREDENTIALS = "Exception.bad.credentials";
-    private static final String OPTIMISTIC_LOCK = "Exception.optimistic.lock";
+    private static final String OPTIMISTIC_LOCK = "Exception.different.version";
 
     private final MessageSource messageSource;
 
@@ -72,4 +72,11 @@ public class RestExceptionHandler {
         String errorMessage = messageSource.getMessage(OPTIMISTIC_LOCK, null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(IfMatchValueException.class)
+    public ResponseEntity<RestMessage> handleIfMatchValueException(Exception ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(OPTIMISTIC_LOCK, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.PRECONDITION_FAILED);
+    }
+
+
 }

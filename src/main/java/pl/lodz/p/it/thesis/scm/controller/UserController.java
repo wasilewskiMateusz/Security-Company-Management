@@ -1,11 +1,13 @@
 package pl.lodz.p.it.thesis.scm.controller;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
+import pl.lodz.p.it.thesis.scm.exception.IfMatchValueException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -32,8 +34,9 @@ public class UserController {
         if (user.isEmpty()) {
             throw new RestException("Exception.user.not.found");
         }
-        Long version = user.get().getVersion();
-        return ResponseEntity.ok().eTag("\"" + version + "\"").body(new UserDTO(user.get()));
+        String version = DigestUtils.sha256Hex(user.get().getVersion().toString());
+
+        return ResponseEntity.ok().eTag(version).body(new UserDTO(user.get()));
     }
 
     @GetMapping
@@ -50,21 +53,24 @@ public class UserController {
 
         Optional<User> userToEdit = userService.getUser(id);
 
-        if(userToEdit.isEmpty()) {
+        if (userToEdit.isEmpty()) {
             throw new RestException("Exception.user.not.found");
         }
 
-        if(ifMatchValue == null){
-            throw new RestException("No header");
+        if (ifMatchValue == null) {
+            throw new RestException("Exception.header.ifMatch.not.found");
         }
 
-        if(!ifMatchValue.equals(userToEdit.get().getVersion().toString())){
-            throw new RestException("Etag changed");
+        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
+
+        if (!ifMatchValue.equals(currentVersion)) {
+            throw new IfMatchValueException();
         }
 
         User editedUser = userService.editUser(userToEdit.get(), userEditDTO);
+        String version = DigestUtils.sha256Hex(editedUser.getVersion().toString());
 
-        return ResponseEntity.ok(new UserEditDTO(editedUser));
+        return ResponseEntity.ok().eTag(version).body(new UserEditDTO(editedUser));
     }
 
 }
