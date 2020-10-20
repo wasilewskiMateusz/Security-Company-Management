@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.requests.UserRequest;
+import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
+import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.RefreshToken;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.repository.RefreshTokenRepository;
@@ -39,16 +41,19 @@ public class AuthenticationService implements IAuthenticationService {
     }
 
     @Override
-    public void registerNewUserAccount(UserRequest userRequest) {
-        if (emailExists(userRequest.getEmail())) {
+    public void registerNewUserAccount(UserRegisterDTO userRegisterDTO) {
+        if (emailExists(userRegisterDTO.getEmail())) {
+            throw new RestException("Exception.user.with.this.email.exist");
         }
         final User user = new User();
+        user.setEmail(userRegisterDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
+        user.setName(userRegisterDTO.getFirstName());
+        user.setLastName(userRegisterDTO.getLastName());
+        user.setPhoneNumber(userRegisterDTO.getPhoneNumber());
+        user.setEnabled(false);
 
-        user.setEmail(userRequest.getEmail());
-        user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
-        user.setEnabled(true);
-
-        user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
+        user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_EMPLOYEE")));
         userRepository.save(user);
 
     }

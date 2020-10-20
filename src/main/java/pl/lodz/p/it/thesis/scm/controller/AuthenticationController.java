@@ -20,6 +20,7 @@ import pl.lodz.p.it.thesis.scm.dto.responses.AppResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtAuthenticateResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.SuccessResponse;
+import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
@@ -53,9 +54,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AppResponse> registerNewUserAccount(@Valid @RequestBody UserRequest userRequest) {
-        authenticationService.registerNewUserAccount(userRequest);
-        return new ResponseEntity<>(new SuccessResponse("success"), HttpStatus.OK);
+    public ResponseEntity<RestMessage> registerNewUserAccount(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
+        authenticationService.registerNewUserAccount(userRegisterDTO);
+        return ResponseEntity.ok(new RestMessage("Success"));
     }
 
     @PostMapping("/authenticate")
