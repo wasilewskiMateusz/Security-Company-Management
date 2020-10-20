@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +22,7 @@ import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.SuccessResponse;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
+import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
 import pl.lodz.p.it.thesis.scm.service.implementation.AuthenticationService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
@@ -33,14 +35,14 @@ import java.time.ZoneId;
 public class AuthenticationController {
 
 
-    private final AuthenticationService authenticationService;
+    private final IAuthenticationService authenticationService;
     private final AuthenticationManager authenticationManager;
     private final MyUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
 
 
     @Autowired
-    public AuthenticationController(AuthenticationService authenticationService,
+    public AuthenticationController(IAuthenticationService authenticationService,
                                     AuthenticationManager authenticationManager,
                                     MyUserDetailsService userDetailsService,
                                     JwtUtil jwtUtil) {
@@ -59,8 +61,14 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<JwtAuthenticateResponse> createAuthenticationToken(@Valid @RequestBody JwtRequest jwtRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
+        UserDetails userDetails;
+        try {
+           userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
+        }
+        catch (UsernameNotFoundException ex) {
+            throw new RestException("Exception.bad.credentials");
+        }
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
         LocalDateTime expirationTime = LocalDateTime.ofInstant(jwtUtil.getExpirationDateFromToken(refreshToken).toInstant(), ZoneId.systemDefault());

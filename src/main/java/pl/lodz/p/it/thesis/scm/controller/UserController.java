@@ -48,7 +48,9 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserEditDTO> editWorkplace(WebRequest request, @Valid @RequestBody UserEditDTO userEditDTO, @PathVariable Long id) {
+    public ResponseEntity<UserEditDTO> editWorkplace(WebRequest request,
+                                                     @Valid @RequestBody UserEditDTO userEditDTO,
+                                                     @PathVariable Long id) {
         String ifMatchValue = request.getHeader("If-Match");
 
         Optional<User> userToEdit = userService.getUser(id);
