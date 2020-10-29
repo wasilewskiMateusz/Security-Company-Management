@@ -58,7 +58,7 @@ public class UserController {
 
         String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
 
-        if (userEditDTO.getVersion().equals(currentVersion)) {
+        if (!userEditDTO.getVersion().equals(currentVersion)) {
             throw new RestException("Exception.different.version");
         }
 
