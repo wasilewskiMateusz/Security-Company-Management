@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
-import pl.lodz.p.it.thesis.scm.exception.IfMatchValueException;
+import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -32,11 +32,10 @@ public class UserController {
     public ResponseEntity<UserDTO> get(@PathVariable Long id) {
         Optional<User> user = userService.getUser(id);
         if (user.isEmpty()) {
-            throw new RestException("Exception.user.not.found");
+            throw new ResourceNotExistException();
         }
-        String version = DigestUtils.sha256Hex(user.get().getVersion().toString());
 
-        return ResponseEntity.ok().eTag(version).body(new UserDTO(user.get()));
+        return ResponseEntity.ok(new UserDTO(user.get()));
     }
 
     @GetMapping
@@ -48,31 +47,24 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserEditDTO> editWorkplace(WebRequest request,
-                                                     @Valid @RequestBody UserEditDTO userEditDTO,
+    public ResponseEntity<UserEditDTO> editWorkplace(@Valid @RequestBody UserEditDTO userEditDTO,
                                                      @PathVariable Long id) {
-        String ifMatchValue = request.getHeader("If-Match");
 
         Optional<User> userToEdit = userService.getUser(id);
 
         if (userToEdit.isEmpty()) {
-            throw new RestException("Exception.user.not.found");
-        }
-
-        if (ifMatchValue == null) {
-            throw new RestException("Exception.header.ifMatch.not.found");
+            throw new ResourceNotExistException();
         }
 
         String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
 
-        if (!ifMatchValue.equals(currentVersion)) {
-            throw new IfMatchValueException();
+        if (userEditDTO.getVersion().equals(currentVersion)) {
+            throw new RestException("Exception.different.version");
         }
 
         User editedUser = userService.editUser(userToEdit.get(), userEditDTO);
-        String version = DigestUtils.sha256Hex(editedUser.getVersion().toString());
 
-        return ResponseEntity.ok().eTag(version).body(new UserEditDTO(editedUser));
+        return ResponseEntity.ok(new UserEditDTO(editedUser));
     }
 
 }

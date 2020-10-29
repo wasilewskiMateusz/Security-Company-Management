@@ -1,9 +1,7 @@
 package pl.lodz.p.it.thesis.scm.controller;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,16 +13,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRefreshRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRequest;
-import pl.lodz.p.it.thesis.scm.dto.requests.UserRequest;
-import pl.lodz.p.it.thesis.scm.dto.responses.AppResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtAuthenticateResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
-import pl.lodz.p.it.thesis.scm.dto.responses.SuccessResponse;
 import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
-import pl.lodz.p.it.thesis.scm.service.implementation.AuthenticationService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
 

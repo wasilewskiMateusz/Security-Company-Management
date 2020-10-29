@@ -10,7 +10,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
@@ -26,6 +25,8 @@ public class RestExceptionHandler {
     private static final String USER_DISABLED = "Exception.user.disabled";
     private static final String BAD_CREDENTIALS = "Exception.bad.credentials";
     private static final String OPTIMISTIC_LOCK = "Exception.different.version";
+    private final String RESOURCE_NOT_EXIST = "Exception.resource.not.found";
+
 
     private final MessageSource messageSource;
 
@@ -62,20 +63,23 @@ public class RestExceptionHandler {
         String errorMessage = messageSource.getMessage(USER_DISABLED, null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.FORBIDDEN);
     }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<RestMessage> handleBadCredentialsException(Exception ex, Locale locale) {
         String errorMessage = messageSource.getMessage(BAD_CREDENTIALS, null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.UNAUTHORIZED);
     }
+
     @ExceptionHandler(OptimisticLockingFailureException.class)
     public ResponseEntity<RestMessage> handleOptimisticLockingFailureException(Exception ex, Locale locale) {
         String errorMessage = messageSource.getMessage(OPTIMISTIC_LOCK, null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.CONFLICT);
     }
-    @ExceptionHandler(IfMatchValueException.class)
-    public ResponseEntity<RestMessage> handleIfMatchValueException(Exception ex, Locale locale) {
-        String errorMessage = messageSource.getMessage(OPTIMISTIC_LOCK, null, locale);
-        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.PRECONDITION_FAILED);
+
+    @ExceptionHandler(ResourceNotExistException.class)
+    public ResponseEntity<RestMessage> handleResourceNotExistException(Exception ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(RESOURCE_NOT_EXIST, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.NOT_FOUND);
     }
 
 
