@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import pl.lodz.p.it.thesis.scm.dto.user.UserAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<UserEditDTO> editWorkplace(@Valid @RequestBody UserEditDTO userEditDTO,
+    public ResponseEntity<UserDTO> editUser(@Valid @RequestBody UserEditDTO userEditDTO,
                                                      @PathVariable Long id) {
 
         Optional<User> userToEdit = userService.getUser(id);
@@ -64,7 +65,28 @@ public class UserController {
 
         User editedUser = userService.editUser(userToEdit.get(), userEditDTO);
 
-        return ResponseEntity.ok(new UserEditDTO(editedUser));
+        return ResponseEntity.ok(new UserDTO(editedUser));
+    }
+
+    @PutMapping("{id}/availability")
+    public ResponseEntity<UserDTO> editUserAvailability(@Valid @RequestBody UserAvailabilityDTO userAvailabilityDTO,
+                                                     @PathVariable Long id) {
+
+        Optional<User> userToEdit = userService.getUser(id);
+
+        if (userToEdit.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+
+        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
+
+        if (!userAvailabilityDTO.getVersion().equals(currentVersion)) {
+            throw new RestException("Exception.different.version");
+        }
+
+        User editedUser = userService.changeAvailability(userToEdit.get(), userAvailabilityDTO);
+
+        return ResponseEntity.ok(new UserDTO(editedUser));
     }
 
 }

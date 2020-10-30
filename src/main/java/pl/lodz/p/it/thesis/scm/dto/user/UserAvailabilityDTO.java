@@ -6,10 +6,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UserEditDTO {
-
-    private String name;
-    private String lastName;
-    private String phoneNumber;
+public class UserAvailabilityDTO {
+    private boolean enable;
     private String version;
+
 }

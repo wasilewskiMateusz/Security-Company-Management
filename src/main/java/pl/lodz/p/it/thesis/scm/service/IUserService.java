@@ -1,5 +1,6 @@
 package pl.lodz.p.it.thesis.scm.service;
 
+import pl.lodz.p.it.thesis.scm.dto.user.UserAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
 import pl.lodz.p.it.thesis.scm.model.User;
 
@@ -11,4 +12,5 @@ public interface IUserService {
     Optional<User> getUser(Long id);
     List<User> getAllUsers();
     User editUser(User userToEdit, UserEditDTO userEditDTO);
+    User changeAvailability(User user, UserAvailabilityDTO userAvailabilityDTO);
 }

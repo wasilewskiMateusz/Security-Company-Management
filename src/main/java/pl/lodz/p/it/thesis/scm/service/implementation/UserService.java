@@ -3,6 +3,7 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.it.thesis.scm.dto.user.UserAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
@@ -28,15 +29,23 @@ public class UserService implements IUserService {
         return userRepository.findById(id);
     }
 
+    @Override
     public List<User> getAllUsers(){
         return userRepository.findAll();
     }
 
+    @Override
     public User editUser(User userToEdit, UserEditDTO userEditDTO){
 
             userToEdit.setName(userEditDTO.getName());
             userToEdit.setLastName(userEditDTO.getLastName());
             userToEdit.setPhoneNumber(userEditDTO.getPhoneNumber());
             return userRepository.save(userToEdit);
+    }
+
+    @Override
+    public User changeAvailability(User user, UserAvailabilityDTO userAvailabilityDTO) {
+        user.setEnabled(userAvailabilityDTO.isEnable());
+        return userRepository.save(user);
     }
 }
