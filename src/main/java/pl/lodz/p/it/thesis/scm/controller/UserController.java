@@ -8,6 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.user.UserAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
+import pl.lodz.p.it.thesis.scm.dto.user.UserPasswordDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
@@ -85,6 +86,27 @@ public class UserController {
         }
 
         User editedUser = userService.changeAvailability(userToEdit.get(), userAvailabilityDTO);
+
+        return ResponseEntity.ok(new UserDTO(editedUser));
+    }
+
+    @PutMapping("{id}/password")
+    public ResponseEntity<UserDTO> editUserPassword(@Valid @RequestBody UserPasswordDTO userPasswordDTO,
+                                                        @PathVariable Long id) {
+
+        Optional<User> userToEdit = userService.getUser(id);
+
+        if (userToEdit.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+
+        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
+
+        if (!userPasswordDTO.getVersion().equals(currentVersion)) {
+            throw new RestException("Exception.different.version");
+        }
+
+        User editedUser = userService.changePassword(userToEdit.get(), userPasswordDTO);
 
         return ResponseEntity.ok(new UserDTO(editedUser));
     }

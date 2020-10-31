@@ -1,12 +1,11 @@
 package pl.lodz.p.it.thesis.scm.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.user.UserAvailabilityDTO;
-import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
-import pl.lodz.p.it.thesis.scm.exception.RestException;
+import pl.lodz.p.it.thesis.scm.dto.user.UserPasswordDTO;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -18,10 +17,12 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -47,5 +48,13 @@ public class UserService implements IUserService {
     public User changeAvailability(User user, UserAvailabilityDTO userAvailabilityDTO) {
         user.setEnabled(userAvailabilityDTO.isEnable());
         return userRepository.save(user);
+    }
+
+    @Override
+    public User changePassword(User user, UserPasswordDTO userPasswordDTO) {
+        user.setPassword(passwordEncoder.encode(userPasswordDTO.getPassword()));
+        return userRepository.save(user);
+
+
     }
 }
