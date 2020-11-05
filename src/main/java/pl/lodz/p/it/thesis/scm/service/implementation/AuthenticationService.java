@@ -77,6 +77,7 @@ public class AuthenticationService implements IAuthenticationService {
         for(RefreshToken rToken: userTokenList){
             if(passwordEncoder.matches(refreshToken, rToken.getToken())){
                 refreshTokenRepository.deleteById(rToken.getId());
+                break;
             }
         }
     }

@@ -4,6 +4,7 @@ import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -83,6 +84,7 @@ public class AuthenticationController {
             throw new RestException("Exception.refresh.token.is.not.valid");
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if(!userDetails.isEnabled()) throw new DisabledException("");
         final String accessToken = jwtUtil.generateAccessToken(userDetails);
         return ResponseEntity.ok(new JwtRefreshResponse(accessToken));
     }
@@ -92,10 +94,7 @@ public class AuthenticationController {
                                               @RequestHeader("Authorization") String accessToken) {
         String username;
         username = jwtUtil.getUsernameFromToken(accessToken.substring(7));
-
-        if (authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)) {
-            authenticationService.logout(jwtRefreshRequest.getRefreshToken(), username);
-        }
+        authenticationService.logout(jwtRefreshRequest.getRefreshToken(), username);
 
         return ResponseEntity.ok(new RestMessage("Success"));
     }

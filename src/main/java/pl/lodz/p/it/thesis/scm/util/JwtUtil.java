@@ -4,13 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component
@@ -25,13 +25,27 @@ public class JwtUtil {
     @Value("${jwt.refreshExpirationDateInS}")
     private int refreshExpirationDateInS;
 
-    //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
+    }
+
+    public List<SimpleGrantedAuthority> getRolesFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        List<SimpleGrantedAuthority> roles = new ArrayList<>();
+        List<String> roleList = claims.get("roles", List.class);
+        if (roleList != null) {
+            roleList.forEach(role -> roles.add(new SimpleGrantedAuthority(role)));
+        }
+        return roles;
+    }
+
+    public boolean isAccessToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        return claims.get("isAccessToken", Boolean.class);
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -45,10 +59,16 @@ public class JwtUtil {
 
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
+        List<String> roleList = new ArrayList<>();
+        roles.forEach(r -> roleList.add(r.toString()));
+        claims.put("roles", roleList);
+        claims.put("isAccessToken", true);
         return doGenerateAccessToken(claims, userDetails.getUsername());
     }
     public String generateRefreshToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("isAccessToken", false);
         return doGenerateRefreshToken(claims, userDetails.getUsername());
     }
 
