@@ -20,6 +20,7 @@ import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
+import pl.lodz.p.it.thesis.scm.service.IUserService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
 
@@ -30,7 +31,7 @@ import java.time.ZoneId;
 @RestController
 public class AuthenticationController {
 
-
+    private final IUserService userService;
     private final IAuthenticationService authenticationService;
     private final AuthenticationManager authenticationManager;
     private final MyUserDetailsService userDetailsService;
@@ -38,10 +39,11 @@ public class AuthenticationController {
 
 
     @Autowired
-    public AuthenticationController(IAuthenticationService authenticationService,
+    public AuthenticationController(IUserService userService, IAuthenticationService authenticationService,
                                     AuthenticationManager authenticationManager,
                                     MyUserDetailsService userDetailsService,
                                     JwtUtil jwtUtil) {
+        this.userService = userService;
         this.authenticationService = authenticationService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
@@ -60,12 +62,12 @@ public class AuthenticationController {
         UserDetails userDetails;
         try {
            userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
-
         }
         catch (UsernameNotFoundException ex) {
             throw new RestException("Exception.bad.credentials");
         }
-        final String accessToken = jwtUtil.generateAccessToken(userDetails);
+        Long id = this.userService.getUserByEmail(jwtRequest.getEmail()).getId();
+        final String accessToken = jwtUtil.generateAccessToken(userDetails, id);
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
         LocalDateTime expirationTime = LocalDateTime.ofInstant(jwtUtil.getExpirationDateFromToken(refreshToken).toInstant(), ZoneId.systemDefault());
         authenticationService.registerRefreshToken(refreshToken, jwtRequest.getEmail(), expirationTime);
@@ -83,9 +85,10 @@ public class AuthenticationController {
         if (!authenticationService.checkIfTokenExists(jwtRefreshRequest.getRefreshToken(), username)) {
             throw new RestException("Exception.refresh.token.is.not.valid");
         }
+        Long id = userService.getUserByEmail(username).getId();
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if(!userDetails.isEnabled()) throw new DisabledException("");
-        final String accessToken = jwtUtil.generateAccessToken(userDetails);
+        final String accessToken = jwtUtil.generateAccessToken(userDetails, id);
         return ResponseEntity.ok(new JwtRefreshResponse(accessToken));
     }
 

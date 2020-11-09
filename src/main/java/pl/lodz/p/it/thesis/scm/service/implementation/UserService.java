@@ -71,4 +71,9 @@ public class UserService implements IUserService {
         user.setRoles(newRoles);
         return userRepository.save(user);
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 }

@@ -17,4 +17,5 @@ public interface IUserService {
     User changeAvailability(User user, UserAvailabilityDTO userAvailabilityDTO);
     User changePassword(User user, UserPasswordDTO userPasswordDTO);
     User changeRoles(User user, UserRoleDTO userRoleDTO);
+    User getUserByEmail(String email);
 }

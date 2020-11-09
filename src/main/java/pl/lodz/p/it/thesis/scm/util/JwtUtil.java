@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -57,11 +56,12 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
-    public String generateAccessToken(UserDetails userDetails) {
+    public String generateAccessToken(UserDetails userDetails, Long id) {
         Map<String, Object> claims = new HashMap<>();
         Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
         List<String> roleList = new ArrayList<>();
         roles.forEach(r -> roleList.add(r.toString()));
+        claims.put("id", id);
         claims.put("roles", roleList);
         claims.put("isAccessToken", true);
         return doGenerateAccessToken(claims, userDetails.getUsername());
