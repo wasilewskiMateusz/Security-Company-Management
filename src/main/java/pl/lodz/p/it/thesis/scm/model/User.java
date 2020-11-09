@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 
 @Entity
@@ -20,23 +24,38 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
-    @Column(nullable = false)
+    @Column
+    @NotNull
+    @Email
     private String email;
 
-    @Column(nullable = false)
+    @Column
+    @NotNull
+    @Size(min = 8)
     private String password;
 
+    @Column
+    @NotNull
     private boolean enabled;
 
     @Column(table = "personal_data")
+    @NotNull
+    @Size(min = 3, max = 20)
     private String name;
 
     @Column(table = "personal_data")
+    @NotNull
+    @Size(min = 3, max = 20)
     private String lastName;
 
     @Column(table = "personal_data")
+    @NotNull
+    @Size(min = 9, max = 9)
+    @Pattern(regexp = "[0-9]+")
     private String phoneNumber;
 
     @ManyToMany
@@ -46,6 +65,7 @@ public class User {
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
+    @NotNull
     private Collection<Role> roles;
 
     @OneToMany(mappedBy = "user")

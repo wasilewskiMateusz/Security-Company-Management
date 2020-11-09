@@ -7,13 +7,14 @@ import java.util.List;
 @Getter
 public class RestMessage {
     private String message;
-    private List<String> messages;
+    private List<String> detailedMessages;
 
     public RestMessage(String message) {
         this.message = message;
     }
 
-    public RestMessage(List<String> messages) {
-        this.messages = messages;
+    public RestMessage(String message, List<String> detailedMessages) {
+        this.message = message;
+        this.detailedMessages = detailedMessages;
     }
 }
