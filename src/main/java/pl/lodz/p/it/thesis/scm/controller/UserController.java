@@ -107,6 +107,15 @@ public class UserController {
         return ResponseEntity.ok(new UserDTO(editedUser));
     }
 
+    @PutMapping("{id}/own-password")
+    public ResponseEntity<UserDTO> editOwnPassword(@Valid @RequestBody UserOwnPasswordDTO userOwnPasswordDTO,
+                                                 @PathVariable Long id) {
+
+        User editedUser = userService.changeOwnPassword(id, userOwnPasswordDTO);
+
+        return ResponseEntity.ok(new UserDTO(editedUser));
+    }
+
     @PutMapping("{id}/roles")
     public ResponseEntity<UserDTO> editUserRoles(@Valid @RequestBody UserRoleDTO userRoleDTO,
                                                     @PathVariable Long id) {

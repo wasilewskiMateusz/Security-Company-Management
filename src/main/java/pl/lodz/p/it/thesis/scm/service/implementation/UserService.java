@@ -1,12 +1,12 @@
 package pl.lodz.p.it.thesis.scm.service.implementation;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.it.thesis.scm.dto.user.UserAvailabilityDTO;
-import pl.lodz.p.it.thesis.scm.dto.user.UserEditDTO;
-import pl.lodz.p.it.thesis.scm.dto.user.UserPasswordDTO;
-import pl.lodz.p.it.thesis.scm.dto.user.UserRoleDTO;
+import pl.lodz.p.it.thesis.scm.dto.user.*;
+import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
+import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.Role;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
@@ -75,5 +75,30 @@ public class UserService implements IUserService {
     @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public User changeOwnPassword(Long id, UserOwnPasswordDTO userOwnPasswordDTO) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+
+        User user = userOptional.get();
+
+        String currentVersion = DigestUtils.sha256Hex(user.getVersion().toString());
+
+        if (!userOwnPasswordDTO.getVersion().equals(currentVersion)) {
+            throw new RestException("Exception.different.version");
+        }
+
+        if (!passwordEncoder.matches(userOwnPasswordDTO.getPreviousPassword(), user.getPassword())) {
+            throw new RestException("Exception.bad.previous.password");
+        }
+
+        user.setPassword(passwordEncoder.encode(userOwnPasswordDTO.getPassword()));
+
+        return userRepository.save(user);
+
     }
 }

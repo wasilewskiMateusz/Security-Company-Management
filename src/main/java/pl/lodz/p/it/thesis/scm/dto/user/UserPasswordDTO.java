@@ -10,5 +10,4 @@ public class UserPasswordDTO {
     private String password;
     private String rePassword;
     private String version;
-
 }
