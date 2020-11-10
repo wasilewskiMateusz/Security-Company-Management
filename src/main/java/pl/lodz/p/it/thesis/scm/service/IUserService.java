@@ -10,10 +10,10 @@ public interface IUserService {
 
     Optional<User> getUser(Long id);
     List<User> getAllUsers();
-    User editUser(User userToEdit, UserEditDTO userEditDTO);
-    User changeAvailability(User user, UserAvailabilityDTO userAvailabilityDTO);
-    User changePassword(User user, UserPasswordDTO userPasswordDTO);
-    User changeRoles(User user, UserRoleDTO userRoleDTO);
+    User editUser(Long id, UserEditDTO userEditDTO);
+    User changeAvailability(Long id, UserAvailabilityDTO userAvailabilityDTO);
+    User changePassword(Long id, UserPasswordDTO userPasswordDTO);
+    User changeRoles(Long id, UserRoleDTO userRoleDTO);
     User getUserByEmail(String email);
     User changeOwnPassword(Long id, UserOwnPasswordDTO userOwnPasswordDTO);
 }

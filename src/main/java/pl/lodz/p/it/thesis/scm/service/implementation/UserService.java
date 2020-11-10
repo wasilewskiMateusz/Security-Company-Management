@@ -42,28 +42,35 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User editUser(User userToEdit, UserEditDTO userEditDTO) {
+    public User editUser(Long id, UserEditDTO userEditDTO) {
 
-        userToEdit.setName(userEditDTO.getName());
-        userToEdit.setLastName(userEditDTO.getLastName());
-        userToEdit.setPhoneNumber(userEditDTO.getPhoneNumber());
-        return userRepository.save(userToEdit);
+        User user = checkVersion(id, userEditDTO.getVersion());
+
+        user.setName(userEditDTO.getName());
+        user.setLastName(userEditDTO.getLastName());
+        user.setPhoneNumber(userEditDTO.getPhoneNumber());
+        return userRepository.save(user);
     }
 
     @Override
-    public User changeAvailability(User user, UserAvailabilityDTO userAvailabilityDTO) {
+    public User changeAvailability(Long id, UserAvailabilityDTO userAvailabilityDTO) {
+        User user = checkVersion(id, userAvailabilityDTO.getVersion());
         user.setEnabled(userAvailabilityDTO.isEnable());
         return userRepository.save(user);
     }
 
     @Override
-    public User changePassword(User user, UserPasswordDTO userPasswordDTO) {
+    public User changePassword(Long id, UserPasswordDTO userPasswordDTO) {
+        User user = checkVersion(id, userPasswordDTO.getVersion());
         user.setPassword(passwordEncoder.encode(userPasswordDTO.getPassword()));
         return userRepository.save(user);
     }
 
     @Override
-    public User changeRoles(User user, UserRoleDTO userRoleDTO) {
+    public User changeRoles(Long id, UserRoleDTO userRoleDTO) {
+
+        User user = checkVersion(id, userRoleDTO.getVersion());
+
         List<Role> newRoles = new ArrayList<>();
         userRoleDTO.getNewRolesIds().forEach(roleId ->
                 roleRepository.findById(roleId).ifPresent(newRoles::add)
@@ -79,18 +86,8 @@ public class UserService implements IUserService {
 
     @Override
     public User changeOwnPassword(Long id, UserOwnPasswordDTO userOwnPasswordDTO) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
-            throw new ResourceNotExistException();
-        }
 
-        User user = userOptional.get();
-
-        String currentVersion = DigestUtils.sha256Hex(user.getVersion().toString());
-
-        if (!userOwnPasswordDTO.getVersion().equals(currentVersion)) {
-            throw new RestException("Exception.different.version");
-        }
+        User user = checkVersion(id, userOwnPasswordDTO.getVersion());
 
         if (!passwordEncoder.matches(userOwnPasswordDTO.getPreviousPassword(), user.getPassword())) {
             throw new RestException("Exception.bad.previous.password");
@@ -99,6 +96,24 @@ public class UserService implements IUserService {
         user.setPassword(passwordEncoder.encode(userOwnPasswordDTO.getPassword()));
 
         return userRepository.save(user);
+    }
 
+
+    private User checkVersion(Long id, String version) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+
+        User user = userOptional.get();
+
+        String currentVersion = DigestUtils.sha256Hex(user.getVersion().toString());
+
+        if (!version.equals(currentVersion)) {
+            throw new RestException("Exception.different.version");
+        }
+
+        return user;
     }
 }

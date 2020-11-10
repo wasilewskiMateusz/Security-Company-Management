@@ -48,19 +48,7 @@ public class UserController {
     public ResponseEntity<UserDTO> editUser(@Valid @RequestBody UserEditDTO userEditDTO,
                                                      @PathVariable Long id) {
 
-        Optional<User> userToEdit = userService.getUser(id);
-
-        if (userToEdit.isEmpty()) {
-            throw new ResourceNotExistException();
-        }
-
-        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
-
-        if (!userEditDTO.getVersion().equals(currentVersion)) {
-            throw new RestException("Exception.different.version");
-        }
-
-        User editedUser = userService.editUser(userToEdit.get(), userEditDTO);
+        User editedUser = userService.editUser(id, userEditDTO);
 
         return ResponseEntity.ok(new UserDTO(editedUser));
     }
@@ -69,19 +57,7 @@ public class UserController {
     public ResponseEntity<UserDTO> editUserAvailability(@Valid @RequestBody UserAvailabilityDTO userAvailabilityDTO,
                                                      @PathVariable Long id) {
 
-        Optional<User> userToEdit = userService.getUser(id);
-
-        if (userToEdit.isEmpty()) {
-            throw new ResourceNotExistException();
-        }
-
-        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
-
-        if (!userAvailabilityDTO.getVersion().equals(currentVersion)) {
-            throw new RestException("Exception.different.version");
-        }
-
-        User editedUser = userService.changeAvailability(userToEdit.get(), userAvailabilityDTO);
+        User editedUser = userService.changeAvailability(id, userAvailabilityDTO);
 
         return ResponseEntity.ok(new UserDTO(editedUser));
     }
@@ -90,19 +66,7 @@ public class UserController {
     public ResponseEntity<UserDTO> editUserPassword(@Valid @RequestBody UserPasswordDTO userPasswordDTO,
                                                         @PathVariable Long id) {
 
-        Optional<User> userToEdit = userService.getUser(id);
-
-        if (userToEdit.isEmpty()) {
-            throw new ResourceNotExistException();
-        }
-
-        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
-
-        if (!userPasswordDTO.getVersion().equals(currentVersion)) {
-            throw new RestException("Exception.different.version");
-        }
-
-        User editedUser = userService.changePassword(userToEdit.get(), userPasswordDTO);
+        User editedUser = userService.changePassword(id, userPasswordDTO);
 
         return ResponseEntity.ok(new UserDTO(editedUser));
     }
@@ -120,19 +84,7 @@ public class UserController {
     public ResponseEntity<UserDTO> editUserRoles(@Valid @RequestBody UserRoleDTO userRoleDTO,
                                                     @PathVariable Long id) {
 
-        Optional<User> userToEdit = userService.getUser(id);
-
-        if (userToEdit.isEmpty()) {
-            throw new ResourceNotExistException();
-        }
-
-        String currentVersion = DigestUtils.sha256Hex(userToEdit.get().getVersion().toString());
-
-        if (!userRoleDTO.getVersion().equals(currentVersion)) {
-            throw new RestException("Exception.different.version");
-        }
-
-        User editedUser = userService.changeRoles(userToEdit.get(), userRoleDTO);
+        User editedUser = userService.changeRoles(id, userRoleDTO);
 
         return ResponseEntity.ok(new UserDTO(editedUser));
     }
