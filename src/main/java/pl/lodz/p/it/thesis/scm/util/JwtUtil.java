@@ -42,6 +42,12 @@ public class JwtUtil {
         return roles;
     }
 
+    public Long getIdFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        Integer id = claims.get("id", Integer.class);
+        return Long.valueOf(id);
+    }
+
     public boolean isAccessToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
         return claims.get("isAccessToken", Boolean.class);

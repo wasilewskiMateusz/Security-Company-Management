@@ -52,7 +52,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User employer = createUserIfNotFound("employer@edu.pl", "employer", new ArrayList<>(Collections.singletonList(employerRole)), "Jan", "Kowalski", "123456789");
         User employee = createUserIfNotFound("employee@edu.pl",  "employee", new ArrayList<>(Collections.singletonList(employeeRole)), "Szymon", "Tarwid", "111222333");
 
-        Workplace workplace = createWorkPlaceIfNotFound("Lordis club", "Best sound club", "Piotrkowska 101", true, 5.0, employer);
+        Workplace workplace = createWorkPlaceIfNotFound("Lordis club", "Best sound club", "Piotrkowska 101","Łódź", true, 5.0, employer);
 
 
         alreadySetup = true;
@@ -63,8 +63,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Transactional
     Workplace createWorkPlaceIfNotFound(final String name,
                                         final String description,
-                                        final String address,
-                                        final boolean enable,
+                                        final String street,
+                                        final String city,
+                                        final boolean enabled,
                                         final Double avgRate,
                                         final User employer) {
 
@@ -73,8 +74,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
             workplace = new Workplace();
             workplace.setName(name);
             workplace.setDescription(description);
-            workplace.setAddress(address);
-            workplace.setEnable(enable);
+            workplace.setStreet(street);
+            workplace.setCity(city);
+            workplace.setEnabled(enabled);
             workplace.setAverageRate(avgRate);
             workplace.setEmployer(employer);
             workplaceRepository.save(workplace);

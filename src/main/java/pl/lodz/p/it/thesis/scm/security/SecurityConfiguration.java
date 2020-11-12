@@ -3,6 +3,7 @@ package pl.lodz.p.it.thesis.scm.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -64,6 +65,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/refresh").permitAll()
                 .antMatchers("/users").hasRole("ADMIN")
                 .antMatchers("/users/{id}/**").access("hasRole('ADMIN') or @userSecurity.hasUserId(authentication,#id)")
+                .antMatchers(HttpMethod.POST, "/workplaces").hasRole("EMPLOYER")
+                .antMatchers(HttpMethod.PUT, "/workplaces").hasRole("EMPLOYER")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

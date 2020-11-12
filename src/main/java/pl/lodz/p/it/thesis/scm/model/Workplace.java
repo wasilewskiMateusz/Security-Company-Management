@@ -6,28 +6,55 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 
 @Entity
 @Data
 @ToString(exclude= {"rates", "jobs"})
 @EqualsAndHashCode(exclude= {"rates", "jobs"})
+@SecondaryTable(name = "address")
 public class Workplace {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
+    @Column
+    @NotNull
+    @Size(max = 20)
     private String name;
 
+    @Column
+    @NotNull
+    @Size(max = 256)
     private String description;
 
-    private String address;
+    @Column(table = "address")
+    @NotNull
+    @Size(max = 20)
+    private String city;
 
-    private boolean enable;
+    @Column(table = "address")
+    @NotNull
+    @Size(max = 30)
+    private String street;
 
+    @Column
+    @NotNull
+    private boolean enabled;
+
+    @Column
+    @NotNull
+    @Min(value = 0)
+    @Max(value = 5)
     private Double averageRate;
 
 
@@ -39,5 +66,6 @@ public class Workplace {
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private User employer;
 }

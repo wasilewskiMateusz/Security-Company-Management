@@ -4,13 +4,15 @@ package pl.lodz.p.it.thesis.scm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
+import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.exception.RestException;
-import pl.lodz.p.it.thesis.scm.model.User;
+import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
+import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
-import pl.lodz.p.it.thesis.scm.service.IUserService;
 import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
+import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -22,19 +24,20 @@ import java.util.Optional;
 public class WorkplaceController {
 
     private final IWorkplaceService workplaceService;
-    private final IUserService userService;
+    private final JwtUtil jwtUtil;
+
 
     @Autowired
-    public WorkplaceController(IWorkplaceService workplaceService, IUserService userService) {
+    public WorkplaceController(IWorkplaceService workplaceService, JwtUtil jwtUtil) {
         this.workplaceService = workplaceService;
-        this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
     @GetMapping("{id}")
     public ResponseEntity<WorkplaceDTO> get(@PathVariable Long id) {
         Optional<Workplace> workplace = workplaceService.getWorkplace(id);
         if (workplace.isEmpty()) {
-            throw new RestException("Exception.workplace.not.found");
+            throw new ResourceNotExistException();
         }
         return ResponseEntity.ok(new WorkplaceDTO(workplace.get()));
     }
@@ -47,28 +50,32 @@ public class WorkplaceController {
         return ResponseEntity.ok(workplaceDTOS);
     }
 
-    @PutMapping
-    public ResponseEntity<WorkplaceDTO> editWorkplace(@Valid @RequestBody WorkplaceDTO workplaceDTO) {
-        Workplace workplace = WorkplaceDTO.toWorkplace(workplaceDTO);
-        Workplace editedWorkplace = workplaceService.editWorkplace(workplace);
-        if(editedWorkplace == null) {
-            throw new RestException("Exception.not.found.workplace.to.edit");
-        }
+    @PutMapping("{id}")
+    public ResponseEntity<WorkplaceDTO> editWorkplace(@Valid @RequestBody WorkplaceEditDTO workplaceEditDTO,
+                                                      @PathVariable Long id) {
+        Workplace editedWorkplace = workplaceService.editWorkplace(id, workplaceEditDTO);
+
         return ResponseEntity.ok(new WorkplaceDTO(editedWorkplace));
     }
 
+
     @PostMapping
-    public ResponseEntity<WorkplaceDTO> addWorkplace(@Valid @RequestBody CreateWorkplaceDTO createWorkplaceDTO){
-        Workplace workplace = CreateWorkplaceDTO.toWorkplace(createWorkplaceDTO);
-        workplace.setAverageRate(0.);
-        workplace.setEnable(false);
-        Optional<User> user = userService.getUser(createWorkplaceDTO.getEmployerId());
-        //TODO sprawdzanie roli
-        if(user.isEmpty()){
-            throw new RestException("Exception.workplace.owner.id.not.found");
-        }
-        workplace.setEmployer(user.get());
-        Workplace addedWorkplace = workplaceService.addWorkplace(workplace);
+    public ResponseEntity<WorkplaceDTO> addWorkplace(@Valid @RequestBody CreateWorkplaceDTO createWorkplaceDTO,
+                                                     WebRequest request){
+        String tokenHeader = request.getHeader("Authorization");
+        String token = tokenHeader.substring(7);
+        Long id = jwtUtil.getIdFromToken(token);
+        Workplace addedWorkplace = workplaceService.addWorkplace(createWorkplaceDTO, id);
         return ResponseEntity.ok(new WorkplaceDTO(addedWorkplace));
     }
+
+    @PutMapping("{id}/availability")
+    public ResponseEntity<WorkplaceDTO> editWorkplaceAvailability(@Valid @RequestBody WorkplaceAvailabilityDTO workplaceAvailabilityDTO,
+                                                        @PathVariable Long id) {
+
+        Workplace editedWorkplace = workplaceService.changeAvailability(id, workplaceAvailabilityDTO);
+
+        return ResponseEntity.ok(new WorkplaceDTO(editedWorkplace));
+    }
+
 }

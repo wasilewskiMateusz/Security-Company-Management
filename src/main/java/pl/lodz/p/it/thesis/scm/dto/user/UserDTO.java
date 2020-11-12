@@ -36,15 +36,4 @@ public class UserDTO {
         this.roles = roleDTOs;
 
     }
-
-    public static User toUser(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setEmail(userDTO.getEmail());
-        user.setEnabled(userDTO.isEnabled());
-        user.setName(userDTO.getName());
-        user.setLastName(userDTO.getLastName());
-        user.setPhoneNumber(userDTO.getPhoneNumber());
-        return user;
-    }
 }
