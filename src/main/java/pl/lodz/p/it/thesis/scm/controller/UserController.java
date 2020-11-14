@@ -1,14 +1,15 @@
 package pl.lodz.p.it.thesis.scm.controller;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.lodz.p.it.thesis.scm.dto.user.*;
+import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
-import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.User;
+import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
+import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -87,6 +88,15 @@ public class UserController {
         User editedUser = userService.changeRoles(id, userRoleDTO);
 
         return ResponseEntity.ok(new UserDTO(editedUser));
+    }
+
+    @GetMapping("{id}/workplaces")
+    public ResponseEntity<List<WorkplaceDTO>> getUserWorkplaces(@PathVariable Long id) {
+
+        List<Workplace> workplaces = userService.getUserWorkplaces(id);
+        List<WorkplaceDTO> workplaceDTOS = new ArrayList<>();
+        workplaces.forEach(workplace -> workplaceDTOS.add(new WorkplaceDTO(workplace)));
+        return ResponseEntity.ok(workplaceDTOS);
     }
 
 }

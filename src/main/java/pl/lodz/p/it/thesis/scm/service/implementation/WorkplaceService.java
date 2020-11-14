@@ -80,7 +80,6 @@ public class WorkplaceService implements IWorkplaceService {
         return workplaceRepository.save(workplace);
     }
 
-
     private Workplace checkVersion(Long id, String version) {
         Optional<Workplace> workplaceOptional = workplaceRepository.findById(id);
 

@@ -19,5 +19,6 @@ public interface IWorkplaceService {
     Workplace addWorkplace(CreateWorkplaceDTO createWorkplaceDTO, Long id);
 
     Workplace changeAvailability(Long id, WorkplaceAvailabilityDTO workplaceAvailabilityDTO);
+
 }
 
