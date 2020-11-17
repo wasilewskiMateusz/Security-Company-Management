@@ -28,7 +28,7 @@ public class Job {
 
     private String description;
 
-    private boolean enable;
+    private boolean enabled;
 
     private Double wage;
 
