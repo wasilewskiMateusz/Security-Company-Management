@@ -6,14 +6,17 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.Role;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
+import pl.lodz.p.it.thesis.scm.repository.JobRepository;
 import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -26,15 +29,18 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private final RoleRepository roleRepository;
 
+    private final JobRepository jobRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     private final WorkplaceRepository workplaceRepository;
 
     @Autowired
     public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository,
-                           PasswordEncoder passwordEncoder, WorkplaceRepository workplaceRepository) {
+                           JobRepository jobRepository, PasswordEncoder passwordEncoder, WorkplaceRepository workplaceRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.jobRepository = jobRepository;
         this.passwordEncoder = passwordEncoder;
         this.workplaceRepository = workplaceRepository;
     }
@@ -56,6 +62,8 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Workplace workplace1 = createWorkPlaceIfNotFound("El Cubano", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.", "Moniuszki 1", "Łódź", true, 3.0, employer);
         Workplace workplace2 = createWorkPlaceIfNotFound("Prywatka", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque", "Tuwima 40", "Łódź", true, 1.0, employer);
         Workplace workplace3 = createWorkPlaceIfNotFound("Woodstock", "Najbardziej brudna impreza w Polsce.", "Mickiewicza 113", "Kostrzyn nad odrą", true, 3.35, admin);
+
+        Job job1 = createJobIfNotFound("Sprawdzenie posiadania opasek", 80D, LocalDateTime.of(2020, 12, 25, 4, 0),LocalDateTime.of(2020, 12, 24, 21, 59), 2, workplace1);
 
 
         alreadySetup = true;
@@ -114,6 +122,23 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         user.setRoles(roles);
         user = userRepository.save(user);
         return user;
+    }
+
+    @Transactional
+    Job createJobIfNotFound(final String description, final Double wage,
+                            final LocalDateTime completionDate, final LocalDateTime startDate,
+                            final int vacancy, final Workplace workplace) {
+        Job job = new Job();
+        job.setDescription(description);
+        job.setWage(wage);
+        job.setCompletionDate(completionDate);
+        job.setStartDate(startDate);
+        job.setVacancy(vacancy);
+        job.setWorkplace(workplace);
+        job.setEnabled(true);
+
+        job = jobRepository.save(job);
+        return job;
     }
 
 }
