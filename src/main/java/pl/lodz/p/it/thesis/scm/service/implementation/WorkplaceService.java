@@ -8,12 +8,14 @@ import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
 import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,6 +80,17 @@ public class WorkplaceService implements IWorkplaceService {
         Workplace workplace = checkVersion(id, workplaceAvailabilityDTO.getVersion());
         workplace.setEnabled(workplaceAvailabilityDTO.isEnabled());
         return workplaceRepository.save(workplace);
+    }
+
+    @Override
+    public List<Job> getAllJobsInWorkplace(Long id) {
+
+        Optional<Workplace> workplaceOptional = workplaceRepository.findById(id);
+
+        if(workplaceOptional.isEmpty()){
+            throw new RestException("Exception.workplace.owner.id.not.found");
+        }
+        return new ArrayList<>(workplaceOptional.get().getJobs());
     }
 
     private Workplace checkVersion(Long id, String version) {

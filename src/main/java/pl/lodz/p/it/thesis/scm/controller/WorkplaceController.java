@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
@@ -48,6 +50,14 @@ public class WorkplaceController {
         List<WorkplaceDTO> workplaceDTOS = new ArrayList<>();
         workplaces.forEach(workplace -> workplaceDTOS.add(new WorkplaceDTO(workplace)));
         return ResponseEntity.ok(workplaceDTOS);
+    }
+
+    @GetMapping("{id}/jobs")
+    public ResponseEntity<List<JobDTO>> getAll(@PathVariable Long id) {
+        List<Job> jobs = workplaceService.getAllJobsInWorkplace(id);
+        List<JobDTO> jobsDTOS = new ArrayList<>();
+        jobs.forEach(job -> jobsDTOS.add(new JobDTO(job)));
+        return ResponseEntity.ok(jobsDTOS);
     }
 
     @PutMapping("{id}")

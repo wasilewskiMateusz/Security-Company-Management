@@ -62,7 +62,7 @@ public class Workplace {
     private Collection<Rate> rates;
 
     @OneToMany(mappedBy = "workplace")
-    private Collection<Rate> jobs;
+    private Collection<Job> jobs;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")

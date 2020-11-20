@@ -67,6 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/users/{id}/**").access("hasRole('ADMIN') or @userSecurity.hasUserId(authentication,#id)")
                 .antMatchers(HttpMethod.POST, "/workplaces").hasRole("EMPLOYER")
                 .antMatchers(HttpMethod.PUT, "/workplaces").hasRole("EMPLOYER")
+                .antMatchers(HttpMethod.PUT, "/contracts").hasRole("EMPLOYEE")
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

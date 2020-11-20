@@ -6,14 +6,8 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import pl.lodz.p.it.thesis.scm.model.Job;
-import pl.lodz.p.it.thesis.scm.model.Role;
-import pl.lodz.p.it.thesis.scm.model.User;
-import pl.lodz.p.it.thesis.scm.model.Workplace;
-import pl.lodz.p.it.thesis.scm.repository.JobRepository;
-import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
-import pl.lodz.p.it.thesis.scm.repository.UserRepository;
-import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
+import pl.lodz.p.it.thesis.scm.model.*;
+import pl.lodz.p.it.thesis.scm.repository.*;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -35,14 +29,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     private final WorkplaceRepository workplaceRepository;
 
+    private final StatusRepository statusRepository;
+
     @Autowired
     public SetupDataLoader(UserRepository userRepository, RoleRepository roleRepository,
-                           JobRepository jobRepository, PasswordEncoder passwordEncoder, WorkplaceRepository workplaceRepository) {
+                           JobRepository jobRepository, PasswordEncoder passwordEncoder, WorkplaceRepository workplaceRepository, StatusRepository statusRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.jobRepository = jobRepository;
         this.passwordEncoder = passwordEncoder;
         this.workplaceRepository = workplaceRepository;
+        this.statusRepository = statusRepository;
     }
 
     @Override
@@ -68,6 +65,9 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         Job job3 = createJobIfNotFound("Pilnowanie porządku pod prysznicami", 200D, LocalDateTime.of(2020, 12, 25, 4, 0),LocalDateTime.of(2020, 12, 24, 21, 59), 10, workplace3);
         Job job4 = createJobIfNotFound("Pilnowanie vipów", 40D, LocalDateTime.of(2020, 12, 25, 4, 0),LocalDateTime.of(2020, 12, 24, 21, 59), 1, workplace2);
 
+        Status claimed = createStatusIfNotFound("Claimed");
+        Status started = createStatusIfNotFound("Started");
+        Status finished = createStatusIfNotFound("Finished");
 
         alreadySetup = true;
 
@@ -142,6 +142,15 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
         job = jobRepository.save(job);
         return job;
+    }
+
+    @Transactional
+    Status createStatusIfNotFound(final String name) {
+        Status status = new Status();
+        status.setName(name);
+
+        status = statusRepository.save(status);
+        return status;
     }
 
 }

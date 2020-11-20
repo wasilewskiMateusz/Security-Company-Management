@@ -3,6 +3,7 @@ package pl.lodz.p.it.thesis.scm.service;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 
 import java.util.List;
@@ -20,5 +21,6 @@ public interface IWorkplaceService {
 
     Workplace changeAvailability(Long id, WorkplaceAvailabilityDTO workplaceAvailabilityDTO);
 
+    List<Job> getAllJobsInWorkplace(Long id);
 }
 
