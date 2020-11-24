@@ -16,5 +16,7 @@ public interface IContractService {
     Optional<Contract> getContract(Long id);
 
     Contract createContract(CreateContractDTO createContractDTO, Long userId);
+
+    void deleteContract(Long id);
 }
 

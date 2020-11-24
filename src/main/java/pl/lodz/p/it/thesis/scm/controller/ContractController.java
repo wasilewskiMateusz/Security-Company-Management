@@ -2,10 +2,7 @@ package pl.lodz.p.it.thesis.scm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.contract.ContractDTO;
 import pl.lodz.p.it.thesis.scm.dto.contract.CreateContractDTO;
@@ -13,11 +10,15 @@ import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.model.Contract;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IContractService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
+import pl.lodz.p.it.thesis.scm.util.RestMessage;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("contracts")
@@ -43,5 +44,10 @@ public class ContractController {
         return ResponseEntity.ok(new ContractDTO(createdContract));
 
     }
+    @DeleteMapping("{id}")
+    public ResponseEntity<RestMessage> deleteContract(@PathVariable Long id) {
 
+        contractService.deleteContract(id);
+        return ResponseEntity.ok(new RestMessage("Success"));
+    }
 }

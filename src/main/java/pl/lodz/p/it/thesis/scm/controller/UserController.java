@@ -3,9 +3,13 @@ package pl.lodz.p.it.thesis.scm.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pl.lodz.p.it.thesis.scm.dto.contract.ContractDTO;
+import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.*;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
+import pl.lodz.p.it.thesis.scm.model.Contract;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -97,6 +101,15 @@ public class UserController {
         List<WorkplaceDTO> workplaceDTOS = new ArrayList<>();
         workplaces.forEach(workplace -> workplaceDTOS.add(new WorkplaceDTO(workplace)));
         return ResponseEntity.ok(workplaceDTOS);
+    }
+
+    @GetMapping("{id}/contracts")
+    public ResponseEntity<List<ContractDTO>> getUserContracts(@PathVariable Long id) {
+
+        List<Contract> contracts = userService.getUserContracts(id);
+        List<ContractDTO> contractDTOS = new ArrayList<>();
+        contracts.forEach(contract -> contractDTOS.add(new ContractDTO(contract)));
+        return ResponseEntity.ok(contractDTOS);
     }
 
 }

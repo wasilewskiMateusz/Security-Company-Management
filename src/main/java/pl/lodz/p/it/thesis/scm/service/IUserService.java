@@ -1,6 +1,8 @@
 package pl.lodz.p.it.thesis.scm.service;
 
 import pl.lodz.p.it.thesis.scm.dto.user.*;
+import pl.lodz.p.it.thesis.scm.model.Contract;
+import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 
@@ -19,4 +21,6 @@ public interface IUserService {
     User changeOwnPassword(Long id, UserOwnPasswordDTO userOwnPasswordDTO);
 
     List<Workplace> getUserWorkplaces(Long id);
+
+    List<Contract> getUserContracts(Long id);
 }

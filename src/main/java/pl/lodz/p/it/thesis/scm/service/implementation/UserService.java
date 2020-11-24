@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.user.*;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
-import pl.lodz.p.it.thesis.scm.model.Role;
-import pl.lodz.p.it.thesis.scm.model.User;
-import pl.lodz.p.it.thesis.scm.model.Workplace;
+import pl.lodz.p.it.thesis.scm.model.*;
 import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
@@ -110,6 +108,18 @@ public class UserService implements IUserService {
 
         return new ArrayList<>(user.getWorkplaces());
 
+    }
+
+    @Override
+    public List<Contract> getUserContracts(Long id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+        User user = userOptional.get();
+
+        return new ArrayList<>(user.getContracts());
     }
 
 
