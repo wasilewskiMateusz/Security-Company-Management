@@ -88,7 +88,7 @@ public class WorkplaceService implements IWorkplaceService {
         Optional<Workplace> workplaceOptional = workplaceRepository.findById(id);
 
         if(workplaceOptional.isEmpty()){
-            throw new RestException("Exception.workplace.owner.id.not.found");
+            throw new RestException("Exception.job.workplace.id.not.found");
         }
         return new ArrayList<>(workplaceOptional.get().getJobs());
     }

@@ -55,10 +55,10 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         User employer = createUserIfNotFound("employer@edu.pl", "employer", new ArrayList<>(Collections.singletonList(employerRole)), "Jan", "Kowalski", "123456789");
         User employee = createUserIfNotFound("employee@edu.pl", "employee", new ArrayList<>(Collections.singletonList(employeeRole)), "Szymon", "Tarwid", "111222333");
 
-        Workplace workplace = createWorkPlaceIfNotFound("Lordis club", "Best sound club", "Piotrkowska 101", "Łódź", true, 5.0, employer);
-        Workplace workplace1 = createWorkPlaceIfNotFound("El Cubano", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.", "Moniuszki 1", "Łódź", true, 3.0, employer);
-        Workplace workplace2 = createWorkPlaceIfNotFound("Prywatka", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque", "Tuwima 40", "Łódź", true, 1.0, employer);
-        Workplace workplace3 = createWorkPlaceIfNotFound("Woodstock", "Najbardziej brudna impreza w Polsce.", "Mickiewicza 113", "Kostrzyn nad odrą", true, 3.35, admin);
+        Workplace workplace = createWorkPlaceIfNotFound("Lordis club", "Best sound club", "Piotrkowska 101", "Łódź", true, 0., employer);
+        Workplace workplace1 = createWorkPlaceIfNotFound("El Cubano", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis,.", "Moniuszki 1", "Łódź", true, 0., employer);
+        Workplace workplace2 = createWorkPlaceIfNotFound("Prywatka", "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque", "Tuwima 40", "Łódź", true, 0., employer);
+        Workplace workplace3 = createWorkPlaceIfNotFound("Woodstock", "Najbardziej brudna impreza w Polsce.", "Mickiewicza 113", "Kostrzyn nad odrą", true, 0., admin);
 
         Job job1 = createJobIfNotFound("Sprawdzenie posiadania opasek", 80D, LocalDateTime.of(2020, 12, 25, 4, 0),LocalDateTime.of(2020, 12, 24, 21, 59), 3, workplace);
         Job job2 = createJobIfNotFound("Selekcja", 120D, LocalDateTime.of(2020, 12, 25, 4, 0),LocalDateTime.of(2020, 12, 24, 21, 59), 1, workplace1);
