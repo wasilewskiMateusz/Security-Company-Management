@@ -4,11 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import pl.lodz.p.it.thesis.scm.dto.contract.ContractDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobEditDTO;
+import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
+import pl.lodz.p.it.thesis.scm.model.Contract;
 import pl.lodz.p.it.thesis.scm.model.Job;
+import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.service.IJobService;
 
 import javax.validation.Valid;
@@ -52,10 +56,19 @@ public class JobController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<JobDTO> editjob(@Valid @RequestBody JobEditDTO jobEditDTO,
+    public ResponseEntity<JobDTO> editJob(@Valid @RequestBody JobEditDTO jobEditDTO,
                                                       @PathVariable Long id) {
         Job editedJob = jobService.editJob(id, jobEditDTO);
 
         return ResponseEntity.ok(new JobDTO(editedJob));
+    }
+
+
+    @GetMapping("{id}/contracts")
+    public ResponseEntity<List<ContractDTO>> getContracts(@PathVariable Long id) {
+        List<Contract> contracts = jobService.getContracts(id);
+        List<ContractDTO> contractDTOS = new ArrayList<>();
+        contracts.forEach(contract -> contractDTOS.add(new ContractDTO(contract)));
+        return ResponseEntity.ok(contractDTOS);
     }
 }

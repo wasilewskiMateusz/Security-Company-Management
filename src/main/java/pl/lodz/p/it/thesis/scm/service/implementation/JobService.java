@@ -7,12 +7,15 @@ import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
+import pl.lodz.p.it.thesis.scm.model.Contract;
 import pl.lodz.p.it.thesis.scm.model.Job;
+import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.repository.JobRepository;
 import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
 import pl.lodz.p.it.thesis.scm.service.IJobService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +35,7 @@ public class JobService implements IJobService {
     public Job addJob(CreateJobDTO createJobDTO) {
         Optional<Workplace> workplaceOptional = workplaceRepository.findById(createJobDTO.getWorkplaceId());
 
-        if(workplaceOptional.isEmpty()){
+        if (workplaceOptional.isEmpty()) {
             throw new RestException("Exception.job.job.id.not.found");
         }
 
@@ -72,14 +75,24 @@ public class JobService implements IJobService {
         return jobRepository.save(job);
     }
 
-    private Job checkVersion(Long id, String version) {
-        Optional<Job> workplaceOptional = jobRepository.findById(id);
-
-        if (workplaceOptional.isEmpty()) {
+    @Override
+    public List<Contract> getContracts(Long id) {
+        Optional<Job> jobOptional = jobRepository.findById(id);
+        if (jobOptional.isEmpty()) {
             throw new ResourceNotExistException();
         }
 
-        Job job = workplaceOptional.get();
+        return new ArrayList<>(jobOptional.get().getContracts());
+    }
+
+    private Job checkVersion(Long id, String version) {
+        Optional<Job> jobOptional = jobRepository.findById(id);
+
+        if (jobOptional.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+
+        Job job = jobOptional.get();
 
         String currentVersion = DigestUtils.sha256Hex(job.getVersion().toString());
 
