@@ -10,8 +10,8 @@ import java.time.format.DateTimeFormatter;
 
 @Configuration
 public class DateConfiguration {
-    private static final String dateFormat = "yyyy-MM-dd";
-    private static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+    private static final String dateFormat = "dd-MM-yyyy";
+    private static final String dateTimeFormat = "dd-MM-yyyy HH:mm";
 
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {

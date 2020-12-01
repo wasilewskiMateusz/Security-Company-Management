@@ -36,7 +36,7 @@ public class JobService implements IJobService {
         Optional<Workplace> workplaceOptional = workplaceRepository.findById(createJobDTO.getWorkplaceId());
 
         if (workplaceOptional.isEmpty()) {
-            throw new RestException("Exception.job.job.id.not.found");
+            throw new RestException("Exception.job.workplace.id.not.found");
         }
 
         Workplace workplace = workplaceOptional.get();
@@ -47,6 +47,7 @@ public class JobService implements IJobService {
         job.setCompletionDate(createJobDTO.getCompletionDate());
         job.setWage(createJobDTO.getWage());
         job.setVacancy(createJobDTO.getVacancy());
+        job.setEnabled(true);
         job.setWorkplace(workplace);
 
         return jobRepository.save(job);

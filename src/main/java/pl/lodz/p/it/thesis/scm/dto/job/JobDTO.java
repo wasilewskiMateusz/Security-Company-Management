@@ -20,10 +20,10 @@ public class JobDTO {
 
     private int vacancy;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     private LocalDateTime startDate;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     private LocalDateTime completionDate;
 
     private String description;

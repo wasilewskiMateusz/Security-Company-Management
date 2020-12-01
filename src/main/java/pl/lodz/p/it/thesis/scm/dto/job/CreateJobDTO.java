@@ -1,5 +1,6 @@
 package pl.lodz.p.it.thesis.scm.dto.job;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
