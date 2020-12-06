@@ -99,7 +99,6 @@ public class ContractService implements IContractService {
 
     @Override
     public Contract checkIn(ContractCheckInDTO contractCheckInDTO, Long userId, Long id) {
-        Optional<Contract> contractOptional = contractRepository.findById(id);
 
         Contract contract = checkVersion(id, contractCheckInDTO.getVersion());
 
