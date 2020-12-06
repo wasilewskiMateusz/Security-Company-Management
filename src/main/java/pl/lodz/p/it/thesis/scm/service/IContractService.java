@@ -1,5 +1,6 @@
 package pl.lodz.p.it.thesis.scm.service;
 
+import pl.lodz.p.it.thesis.scm.dto.contract.ContractCheckInDTO;
 import pl.lodz.p.it.thesis.scm.dto.contract.CreateContractDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
@@ -18,5 +19,7 @@ public interface IContractService {
     Contract createContract(CreateContractDTO createContractDTO, Long userId);
 
     void deleteContract(Long id);
+
+    Contract checkIn(ContractCheckInDTO contractCheckInDTO, Long userId, Long id);
 }
 

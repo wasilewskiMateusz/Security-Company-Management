@@ -1,14 +1,13 @@
 package pl.lodz.p.it.thesis.scm.service.implementation;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pl.lodz.p.it.thesis.scm.dto.contract.ContractCheckInDTO;
 import pl.lodz.p.it.thesis.scm.dto.contract.CreateContractDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
-import pl.lodz.p.it.thesis.scm.model.Contract;
-import pl.lodz.p.it.thesis.scm.model.Job;
-import pl.lodz.p.it.thesis.scm.model.Status;
-import pl.lodz.p.it.thesis.scm.model.User;
+import pl.lodz.p.it.thesis.scm.model.*;
 import pl.lodz.p.it.thesis.scm.repository.ContractRepository;
 import pl.lodz.p.it.thesis.scm.repository.JobRepository;
 import pl.lodz.p.it.thesis.scm.repository.StatusRepository;
@@ -96,6 +95,43 @@ public class ContractService implements IContractService {
         job.setVacancy(contract.getJob().getVacancy()+1);
         jobRepository.save(job);
         contractRepository.delete(contract);
+    }
+
+    @Override
+    public Contract checkIn(ContractCheckInDTO contractCheckInDTO, Long userId, Long id) {
+        Optional<Contract> contractOptional = contractRepository.findById(id);
+
+        Contract contract = checkVersion(id, contractCheckInDTO.getVersion());
+
+        if(!contract.getEmployee().getId().equals(userId)){
+            throw new RestException("Exception.contract.not.correct.user");
+        }
+
+        if(contract.getStatus().getName().equals("Claimed")){
+            contract.setStatus(statusRepository.findByName("Started"));
+        }
+        else {
+            throw new RestException("Exception.contract.not.correct.status");
+        }
+        return contractRepository.save(contract);
+    }
+
+    private Contract checkVersion(Long id, String version) {
+        Optional<Contract> contractOptional = contractRepository.findById(id);
+
+        if (contractOptional.isEmpty()) {
+            throw new ResourceNotExistException();
+        }
+
+        Contract contract = contractOptional.get();
+
+        String currentVersion = DigestUtils.sha256Hex(contract.getVersion().toString());
+
+        if (!version.equals(currentVersion)) {
+            throw new RestException("Exception.different.version");
+        }
+
+        return contract;
     }
 
 }

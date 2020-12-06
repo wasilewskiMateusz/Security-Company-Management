@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import pl.lodz.p.it.thesis.scm.dto.contract.ContractCheckInDTO;
 import pl.lodz.p.it.thesis.scm.dto.contract.ContractDTO;
 import pl.lodz.p.it.thesis.scm.dto.contract.CreateContractDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
@@ -46,10 +47,25 @@ public class ContractController {
         return ResponseEntity.ok(new ContractDTO(createdContract));
 
     }
+
     @DeleteMapping("{id}")
     public ResponseEntity<RestMessage> deleteContract(@PathVariable Long id) {
 
         contractService.deleteContract(id);
         return ResponseEntity.ok(new RestMessage("Success"));
+    }
+
+    @PutMapping("{id}/presence")
+    public ResponseEntity<ContractDTO> checkInContract(@PathVariable Long id,
+                                                       @Valid @RequestBody ContractCheckInDTO contractCheckInDTO,
+                                                       WebRequest request){
+        String tokenHeader = request.getHeader("Authorization");
+        String token = tokenHeader.substring(7);
+        Long userId = jwtUtil.getIdFromToken(token);
+
+        Contract changedContract = contractService.checkIn(contractCheckInDTO, userId, id);
+
+        return ResponseEntity.ok(new ContractDTO(changedContract));
+
     }
 }

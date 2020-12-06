@@ -9,12 +9,12 @@ import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.Contract;
 import pl.lodz.p.it.thesis.scm.model.Job;
-import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.repository.JobRepository;
 import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
 import pl.lodz.p.it.thesis.scm.service.IJobService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +37,10 @@ public class JobService implements IJobService {
 
         if (workplaceOptional.isEmpty()) {
             throw new RestException("Exception.job.workplace.id.not.found");
+        }
+
+        if(createJobDTO.getStartDate().isBefore(LocalDateTime.now()) || createJobDTO.getCompletionDate().isBefore(LocalDateTime.now())) {
+            throw new RestException("Exception.job.date.in.past");
         }
 
         Workplace workplace = workplaceOptional.get();
