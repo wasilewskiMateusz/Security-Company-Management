@@ -4,7 +4,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
+import pl.lodz.p.it.thesis.scm.dto.workplace.DeleteWorkplaceDTO;
+import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
@@ -15,6 +16,7 @@ import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.repository.WorkplaceRepository;
 import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,9 +78,12 @@ public class WorkplaceService implements IWorkplaceService {
     }
 
     @Override
-    public Workplace changeAvailability(Long id, WorkplaceAvailabilityDTO workplaceAvailabilityDTO) {
-        Workplace workplace = checkVersion(id, workplaceAvailabilityDTO.getVersion());
-        workplace.setEnabled(workplaceAvailabilityDTO.isEnabled());
+    public Workplace disableWorkplace(Long id, WorkplaceDisabilityDTO workplaceDisabilityDTO) {
+        Workplace workplace = checkVersion(id, workplaceDisabilityDTO.getVersion());
+        if(workplace.getJobs().stream().anyMatch(job -> job.getStartDate().isAfter(LocalDateTime.now()))){
+            throw new RestException("Exception.workplace.has.future.jobs");
+        }
+        workplace.setEnabled(false);
         return workplaceRepository.save(workplace);
     }
 

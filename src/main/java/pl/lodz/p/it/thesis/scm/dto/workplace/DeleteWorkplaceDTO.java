@@ -5,13 +5,9 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
 
-
 @Getter
 @NoArgsConstructor
-public class WorkplaceAvailabilityDTO {
-    @NotNull
-    private boolean enabled;
+public class DeleteWorkplaceDTO {
     @NotNull
     private String version;
-
 }

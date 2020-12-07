@@ -6,15 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
+import pl.lodz.p.it.thesis.scm.dto.workplace.*;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
+import pl.lodz.p.it.thesis.scm.util.RestMessage;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -79,11 +77,10 @@ public class WorkplaceController {
         return ResponseEntity.ok(new WorkplaceDTO(addedWorkplace));
     }
 
-    @PutMapping("{id}/availability")
-    public ResponseEntity<WorkplaceDTO> editWorkplaceAvailability(@Valid @RequestBody WorkplaceAvailabilityDTO workplaceAvailabilityDTO,
+    @PutMapping("{id}/disability")
+    public ResponseEntity<WorkplaceDTO> editWorkplaceAvailability(@Valid @RequestBody WorkplaceDisabilityDTO workplaceDisabilityDTO,
                                                         @PathVariable Long id) {
-
-        Workplace editedWorkplace = workplaceService.changeAvailability(id, workplaceAvailabilityDTO);
+        Workplace editedWorkplace = workplaceService.disableWorkplace(id, workplaceDisabilityDTO);
 
         return ResponseEntity.ok(new WorkplaceDTO(editedWorkplace));
     }

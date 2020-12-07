@@ -15,6 +15,7 @@ public class TokensPurgeTask {
 
     private final RefreshTokenRepository tokenRepository;
 
+    @Autowired
     public TokensPurgeTask(RefreshTokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }

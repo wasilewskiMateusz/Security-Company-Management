@@ -1,7 +1,8 @@
 package pl.lodz.p.it.thesis.scm.service;
 
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceAvailabilityDTO;
+import pl.lodz.p.it.thesis.scm.dto.workplace.DeleteWorkplaceDTO;
+import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
 import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
@@ -19,7 +20,7 @@ public interface IWorkplaceService {
 
     Workplace addWorkplace(CreateWorkplaceDTO createWorkplaceDTO, Long id);
 
-    Workplace changeAvailability(Long id, WorkplaceAvailabilityDTO workplaceAvailabilityDTO);
+    Workplace disableWorkplace(Long id, WorkplaceDisabilityDTO workplaceDisabilityDTO);
 
     List<Job> getAllJobsInWorkplace(Long id);
 }

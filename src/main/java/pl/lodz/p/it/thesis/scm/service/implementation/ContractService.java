@@ -89,10 +89,10 @@ public class ContractService implements IContractService {
         }
         Contract contract = contractOptional.get();
         Job job = contract.getJob();
-        if(!LocalDateTime.now().isBefore(job.getStartDate().minusDays(1))){
+        if (!LocalDateTime.now().isBefore(job.getStartDate().minusDays(1))) {
             throw new RestException("Exception.too.late.to.remove.contract");
         }
-        job.setVacancy(contract.getJob().getVacancy()+1);
+        job.setVacancy(contract.getJob().getVacancy() + 1);
         jobRepository.save(job);
         contractRepository.delete(contract);
     }
@@ -102,16 +102,20 @@ public class ContractService implements IContractService {
 
         Contract contract = checkVersion(id, contractCheckInDTO.getVersion());
 
-        if(!contract.getEmployee().getId().equals(userId)){
+        if (!contract.getEmployee().getId().equals(userId)) {
             throw new RestException("Exception.contract.not.correct.user");
         }
 
-        if(contract.getStatus().getName().equals("Claimed")){
-            contract.setStatus(statusRepository.findByName("Started"));
+        if (!LocalDateTime.now().isAfter(contract.getJob().getStartDate().minusHours(1))) {
+            throw new RestException("Exception.contract.too.early");
         }
-        else {
+
+        if (contract.getStatus().getName().equals("Claimed")) {
+            contract.setStatus(statusRepository.findByName("Started"));
+        } else {
             throw new RestException("Exception.contract.not.correct.status");
         }
+
         return contractRepository.save(contract);
     }
 
