@@ -78,7 +78,7 @@ public class WorkplaceController {
     }
 
     @PutMapping("{id}/disability")
-    public ResponseEntity<WorkplaceDTO> editWorkplaceAvailability(@Valid @RequestBody WorkplaceDisabilityDTO workplaceDisabilityDTO,
+    public ResponseEntity<WorkplaceDTO> disableWorkplace(@Valid @RequestBody WorkplaceDisabilityDTO workplaceDisabilityDTO,
                                                         @PathVariable Long id) {
         Workplace editedWorkplace = workplaceService.disableWorkplace(id, workplaceDisabilityDTO);
 

@@ -4,7 +4,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.DeleteWorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;

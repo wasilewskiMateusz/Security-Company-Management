@@ -4,6 +4,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
+import pl.lodz.p.it.thesis.scm.dto.job.JobDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobEditDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
@@ -88,6 +89,16 @@ public class JobService implements IJobService {
         }
 
         return new ArrayList<>(jobOptional.get().getContracts());
+    }
+
+    @Override
+    public Job disableJob(Long id, JobDisabilityDTO jobDisabilityDTO) {
+        Job job = checkVersion(id, jobDisabilityDTO.getVersion());
+        if(job.getContracts().size() != 0 ){
+            throw new RestException("Exception.job.has.employees");
+        }
+        job.setEnabled(false);
+        return jobRepository.save(job);
     }
 
     private Job checkVersion(Long id, String version) {
