@@ -6,6 +6,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.model.Job;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter

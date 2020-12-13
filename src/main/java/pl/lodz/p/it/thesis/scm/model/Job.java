@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -18,22 +19,42 @@ public class Job {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
+    @Column
+    @NotNull
+    @Min(1)
     private int vacancy;
 
+    @Column
+    @NotNull
+    @Future
     private LocalDateTime startDate;
 
+    @Column
+    @NotNull
+    @Future
     private LocalDateTime completionDate;
 
+    @Column
+    @NotNull
+    @Size(max = 256)
     private String description;
 
+    @Column
+    @NotNull
     private boolean enabled;
 
+    @Column
+    @NotNull
+    @Min(1)
     private Double wage;
 
     @ManyToOne(optional=false)
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private Workplace workplace;
 
     @OneToMany(mappedBy = "job")
