@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Entity
@@ -17,18 +18,23 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private Status status;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private User employee;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private Job job;
 
     public Contract(User employee, Job job) {

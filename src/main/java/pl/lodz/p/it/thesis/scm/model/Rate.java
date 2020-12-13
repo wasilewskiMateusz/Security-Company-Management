@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Data
@@ -17,16 +20,24 @@ public class Rate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
+    @Column
+    @NotNull
+    @Min(0)
+    @Max(5)
     private int value;
 
     @ManyToOne(optional=false)
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private Workplace workplace;
 
     @ManyToOne(optional=false)
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private User user;
 
     public Rate(int value, Workplace workplace, User user) {

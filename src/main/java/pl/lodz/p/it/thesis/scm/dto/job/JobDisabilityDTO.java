@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @NoArgsConstructor
 public class JobDisabilityDTO {
+
     @NotNull
     private String version;
 }
