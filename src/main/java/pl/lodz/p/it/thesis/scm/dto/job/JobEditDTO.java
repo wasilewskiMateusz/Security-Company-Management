@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class JobEditDTO {
 
-    private String version;
-
     private int vacancy;
 
     private LocalDateTime startDate;
@@ -23,13 +21,6 @@ public class JobEditDTO {
 
     private Double wage;
 
-    public JobEditDTO(Job job) {
-        this.version = DigestUtils.sha256Hex(job.getVersion().toString());
-        this.vacancy = job.getVacancy();
-        this.description = job.getDescription();
-        this.startDate = job.getStartDate();
-        this.completionDate = job.getCompletionDate();
-        this.wage = job.getWage();
-    }
+    private String version;
 
 }

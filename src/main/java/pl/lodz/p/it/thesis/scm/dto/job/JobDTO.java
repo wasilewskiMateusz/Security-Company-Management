@@ -1,12 +1,10 @@
 package pl.lodz.p.it.thesis.scm.dto.job;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.model.Job;
-import pl.lodz.p.it.thesis.scm.model.Workplace;
 
 import java.time.LocalDateTime;
 
@@ -20,10 +18,8 @@ public class JobDTO {
 
     private int vacancy;
 
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     private LocalDateTime startDate;
 
-    @JsonFormat(pattern="dd-MM-yyyy HH:mm")
     private LocalDateTime completionDate;
 
     private String description;

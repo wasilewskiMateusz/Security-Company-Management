@@ -9,14 +9,9 @@ import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobEditDTO;
-import pl.lodz.p.it.thesis.scm.dto.user.UserDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
-import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.model.Contract;
 import pl.lodz.p.it.thesis.scm.model.Job;
-import pl.lodz.p.it.thesis.scm.model.User;
-import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IJobService;
 
 import javax.validation.Valid;
