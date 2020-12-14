@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRefreshRequest;
-import pl.lodz.p.it.thesis.scm.dto.requests.JwtRequest;
+import pl.lodz.p.it.thesis.scm.dto.user.UserAuthenticateDTO;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtAuthenticateResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
 import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
@@ -57,20 +57,20 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<JwtAuthenticateResponse> createAuthenticationToken(@Valid @RequestBody JwtRequest jwtRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtRequest.getEmail(), jwtRequest.getPassword()));
+    public ResponseEntity<JwtAuthenticateResponse> createAuthenticationToken(@Valid @RequestBody UserAuthenticateDTO userAuthenticateDTO) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userAuthenticateDTO.getEmail(), userAuthenticateDTO.getPassword()));
         UserDetails userDetails;
         try {
-           userDetails = userDetailsService.loadUserByUsername(jwtRequest.getEmail());
+           userDetails = userDetailsService.loadUserByUsername(userAuthenticateDTO.getEmail());
         }
         catch (UsernameNotFoundException ex) {
             throw new RestException("Exception.bad.credentials");
         }
-        Long id = this.userService.getUserByEmail(jwtRequest.getEmail()).getId();
+        Long id = this.userService.getUserByEmail(userAuthenticateDTO.getEmail()).getId();
         final String accessToken = jwtUtil.generateAccessToken(userDetails, id);
         final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
         LocalDateTime expirationTime = LocalDateTime.ofInstant(jwtUtil.getExpirationDateFromToken(refreshToken).toInstant(), ZoneId.systemDefault());
-        authenticationService.registerRefreshToken(refreshToken, jwtRequest.getEmail(), expirationTime);
+        authenticationService.registerRefreshToken(refreshToken, userAuthenticateDTO.getEmail(), expirationTime);
         return ResponseEntity.ok(new JwtAuthenticateResponse(accessToken, refreshToken));
     }
 

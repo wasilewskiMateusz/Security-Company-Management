@@ -3,7 +3,6 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.lodz.p.it.thesis.scm.dto.requests.UserRequest;
 import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.RefreshToken;
@@ -13,7 +12,6 @@ import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
