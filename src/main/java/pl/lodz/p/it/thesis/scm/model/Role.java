@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Entity
@@ -19,8 +20,11 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
+    @NotNull
     private String name;
 
     @ManyToMany(mappedBy = "roles")

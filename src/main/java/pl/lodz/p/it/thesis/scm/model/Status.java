@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 
 @Data
@@ -16,8 +17,11 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
+    @NotNull
     private String name;
 
     @OneToMany(mappedBy = "status")

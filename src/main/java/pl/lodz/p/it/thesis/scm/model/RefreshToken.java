@@ -3,6 +3,8 @@ package pl.lodz.p.it.thesis.scm.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,14 +18,20 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private  @Version Long version;
+    @Version
+    @NotNull
+    private Long version;
 
+    @NotNull
     private String token;
 
     @ManyToOne
     @JoinColumn(referencedColumnName = "id")
+    @NotNull
     private User user;
 
+    @NotNull
+    @Future
     private LocalDateTime expiryDate;
 
     public RefreshToken(String token, User user, LocalDateTime expiryDate){
