@@ -81,13 +81,19 @@ public class ContractService implements IContractService {
     }
 
     @Override
-    public void deleteContract(Long id) {
+    public void deleteContract(Long id, Long userId) {
         Optional<Contract> contractOptional = contractRepository.findById(id);
 
         if (contractOptional.isEmpty()) {
             throw new ResourceNotExistException();
         }
+
         Contract contract = contractOptional.get();
+
+        if(!(contract.getEmployee().getId().equals(userId) || contract.getJob().getWorkplace().getEmployer().getId().equals(userId))) {
+            throw new RestException("Exception.contract.not.allowed.person");
+        }
+
         Job job = contract.getJob();
         if (!LocalDateTime.now().isBefore(job.getStartDate().minusDays(1))) {
             throw new RestException("Exception.too.late.to.remove.contract");

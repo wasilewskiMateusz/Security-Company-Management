@@ -63,12 +63,32 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/register").permitAll()
                 .antMatchers("/authenticate").permitAll()
                 .antMatchers("/refresh").permitAll()
+
                 .antMatchers("/users").hasRole("ADMIN")
-                .antMatchers("/users/{id}/**").access("hasRole('ADMIN') or @userSecurity.hasUserId(authentication,#id)")
+                .antMatchers("/users/{id}").access("hasRole('ADMIN') or @userSecurity.hasUserId(authentication,#id)")
+                .antMatchers("/users/{id}/availability").hasRole("ADMIN")
+                .antMatchers("/users/{id}/password").hasRole("ADMIN")
+                .antMatchers("/users/{id}/own-password").access("@userSecurity.hasUserId(authentication,#id)")
+                .antMatchers("/users/{id}/roles").hasRole("ADMIN")
+
                 .antMatchers(HttpMethod.POST, "/workplaces").hasRole("EMPLOYER")
-                .antMatchers(HttpMethod.PUT, "/workplaces").hasRole("EMPLOYER")
+                .antMatchers("/users/{id}/workplaces").access("hasRole('ADMIN') or (@userSecurity.hasUserId(authentication,#id) and hasRole('EMPLOYER'))")
+                .antMatchers(HttpMethod.PUT, "/workplaces/{id}").access("hasRole('ADMIN') or (@userSecurity.isUserWorkplaceOwner(authentication,#id) and hasRole('EMPLOYER'))")
+                .antMatchers(HttpMethod.PUT, "/workplaces/{id}/disability").access("hasRole('ADMIN') or (@userSecurity.isUserWorkplaceOwner(authentication,#id) and hasRole('EMPLOYER'))")
+
+                .antMatchers("rates").hasRole("EMPLOYEE")
+
+                .antMatchers(HttpMethod.POST, "/jobs").hasRole("EMPLOYER")
+                .antMatchers(HttpMethod.PUT, "/jobs/{id}").access("hasRole('ADMIN') or (@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER'))")
+                .antMatchers(HttpMethod.GET, "/jobs/{id}/contracts").access("@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER')")
+                .antMatchers(HttpMethod.PUT, "/jobs/{id}/disability").access("hasRole('ADMIN') or (@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER'))")
+                .antMatchers("/users/{id}/contracts").access("hasRole('EMPLOYEE') and @userSecurity.hasUserId(authentication,#id)")
+
+
                 .antMatchers(HttpMethod.POST, "/contracts").hasRole("EMPLOYEE")
-                .antMatchers(HttpMethod.POST, "/rates").hasRole("EMPLOYEE")
+                .antMatchers(HttpMethod.PUT, "/contracts/presence").hasRole("EMPLOYEE")
+                    .antMatchers(HttpMethod.DELETE, "/contracts/{id}").hasAnyRole("EMPLOYER", "EMPLOYEE")
+
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)

@@ -13,6 +13,7 @@ import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.model.Contract;
 import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.service.IJobService;
+import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -24,16 +25,21 @@ import java.util.Optional;
 public class JobController {
 
     private final IJobService jobService;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public JobController(IJobService jobService) {
+    public JobController(IJobService jobService, JwtUtil jwtUtil) {
         this.jobService = jobService;
+        this.jwtUtil = jwtUtil;
     }
 
 
     @PostMapping
-    public ResponseEntity<JobDTO> addJob(@Valid @RequestBody CreateJobDTO createJobDTO){
-        Job addedJob = jobService.addJob(createJobDTO);
+    public ResponseEntity<JobDTO> addJob(@Valid @RequestBody CreateJobDTO createJobDTO, WebRequest request){
+        String tokenHeader = request.getHeader("Authorization");
+        String token = tokenHeader.substring(7);
+        Long id = jwtUtil.getIdFromToken(token);
+        Job addedJob = jobService.addJob(createJobDTO, id);
         return ResponseEntity.ok(new JobDTO(addedJob));
     }
 

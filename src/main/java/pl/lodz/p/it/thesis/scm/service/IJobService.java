@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface IJobService {
 
-    Job addJob(CreateJobDTO createJobDTO);
+    Job addJob(CreateJobDTO createJobDTO, Long userId);
 
     Optional<Job> getJob(Long id);
 

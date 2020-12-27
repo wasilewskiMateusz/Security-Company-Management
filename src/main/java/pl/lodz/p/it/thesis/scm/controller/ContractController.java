@@ -49,9 +49,13 @@ public class ContractController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<RestMessage> deleteContract(@PathVariable Long id) {
+    public ResponseEntity<RestMessage> deleteContract(@PathVariable Long id, WebRequest request) {
 
-        contractService.deleteContract(id);
+        String tokenHeader = request.getHeader("Authorization");
+        String token = tokenHeader.substring(7);
+        Long userId = jwtUtil.getIdFromToken(token);
+
+        contractService.deleteContract(id, userId);
         return ResponseEntity.ok(new RestMessage("Success"));
     }
 

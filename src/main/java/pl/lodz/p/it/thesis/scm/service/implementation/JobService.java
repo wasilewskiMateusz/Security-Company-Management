@@ -33,7 +33,7 @@ public class JobService implements IJobService {
     }
 
     @Override
-    public Job addJob(CreateJobDTO createJobDTO) {
+    public Job addJob(CreateJobDTO createJobDTO, Long userId) {
         Optional<Workplace> workplaceOptional = workplaceRepository.findById(createJobDTO.getWorkplaceId());
 
         if (workplaceOptional.isEmpty()) {
@@ -45,6 +45,10 @@ public class JobService implements IJobService {
         }
 
         Workplace workplace = workplaceOptional.get();
+
+        if(!workplace.getEmployer().getId().equals(userId)) {
+            throw new RestException("Exception.job.workplace.user.not.employer");
+        }
 
         Job job = new Job();
         job.setDescription(createJobDTO.getDescription());

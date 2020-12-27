@@ -12,7 +12,7 @@ public interface IContractService {
 
     Contract createContract(CreateContractDTO createContractDTO, Long userId);
 
-    void deleteContract(Long id);
+    void deleteContract(Long id, Long userId);
 
     Contract checkIn(ContractCheckInDTO contractCheckInDTO, Long userId, Long id);
 }

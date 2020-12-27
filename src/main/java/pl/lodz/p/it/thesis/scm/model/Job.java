@@ -25,7 +25,7 @@ public class Job {
 
     @Column
     @NotNull
-    @Min(1)
+    @Min(0)
     private int vacancy;
 
     @Column

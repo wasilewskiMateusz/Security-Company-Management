@@ -32,6 +32,8 @@ public class WorkplaceDTO {
 
     private String employerPhone;
 
+    private Long employerId;
+
 
     public WorkplaceDTO(Workplace workplace) {
         this.id = workplace.getId();
@@ -44,6 +46,7 @@ public class WorkplaceDTO {
         this.version = DigestUtils.sha256Hex(workplace.getVersion().toString());
         this.employerData = workplace.getEmployer().getName() +' '+workplace.getEmployer().getLastName();
         this.employerPhone = workplace.getEmployer().getPhoneNumber();
+        this.employerId = workplace.getEmployer().getId();
 
     }
 }

@@ -61,6 +61,7 @@ public class WorkplaceController {
     @PutMapping("{id}")
     public ResponseEntity<WorkplaceDTO> editWorkplace(@Valid @RequestBody WorkplaceEditDTO workplaceEditDTO,
                                                       @PathVariable Long id) {
+
         Workplace editedWorkplace = workplaceService.editWorkplace(id, workplaceEditDTO);
 
         return ResponseEntity.ok(new WorkplaceDTO(editedWorkplace));
