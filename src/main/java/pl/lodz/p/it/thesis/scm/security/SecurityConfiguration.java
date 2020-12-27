@@ -80,7 +80,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 .antMatchers(HttpMethod.POST, "/jobs").hasRole("EMPLOYER")
                 .antMatchers(HttpMethod.PUT, "/jobs/{id}").access("hasRole('ADMIN') or (@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER'))")
-                .antMatchers(HttpMethod.GET, "/jobs/{id}/contracts").access("@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER')")
+                .antMatchers(HttpMethod.GET, "/jobs/{id}/contracts").access("(@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER') or hasRole('ADMIN'))")
                 .antMatchers(HttpMethod.PUT, "/jobs/{id}/disability").access("hasRole('ADMIN') or (@userSecurity.isJobInUserWorkplace(authentication,#id) and hasRole('EMPLOYER'))")
                 .antMatchers("/users/{id}/contracts").access("hasRole('EMPLOYEE') and @userSecurity.hasUserId(authentication,#id)")
 
