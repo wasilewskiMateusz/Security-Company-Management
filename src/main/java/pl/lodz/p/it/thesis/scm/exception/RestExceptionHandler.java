@@ -15,6 +15,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
 
 import javax.validation.ConstraintViolation;
@@ -63,12 +64,18 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(new RestMessage(mainErrorMessage, errorMessages), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<RestMessage> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(RESOURCE_NOT_EXIST, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(TransactionSystemException.class)
     public ResponseEntity<RestMessage> handlePersistenceException(final TransactionSystemException ex, Locale locale) {
         Throwable cause = ex.getRootCause();
         if (cause instanceof ConstraintViolationException) {
             String mainErrorMessage = messageSource.getMessage(NOT_VALID, null, locale);
-            ConstraintViolationException consEx= (ConstraintViolationException) cause;
+            ConstraintViolationException consEx = (ConstraintViolationException) cause;
             final List<String> errors = new ArrayList<>();
             for (final ConstraintViolation<?> violation : consEx.getConstraintViolations()) {
                 errors.add(violation.getPropertyPath() + ": " + violation.getMessage());
