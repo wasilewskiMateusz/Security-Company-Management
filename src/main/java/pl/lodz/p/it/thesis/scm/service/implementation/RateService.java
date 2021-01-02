@@ -2,6 +2,9 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.it.thesis.scm.dto.rate.RateWorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.Rate;
@@ -16,6 +19,7 @@ import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class RateService implements IRateService {
 
     private final RateRepository rateRepository;

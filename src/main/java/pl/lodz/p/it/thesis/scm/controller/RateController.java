@@ -2,6 +2,8 @@ package pl.lodz.p.it.thesis.scm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +18,7 @@ import pl.lodz.p.it.thesis.scm.util.RestMessage;
 import javax.validation.Valid;
 
 @RequestMapping("rates")
+@Transactional(propagation = Propagation.NEVER)
 @RestController
 public class RateController {
 

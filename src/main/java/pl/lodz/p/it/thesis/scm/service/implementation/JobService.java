@@ -3,6 +3,9 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.it.thesis.scm.dto.job.CreateJobDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.job.JobEditDTO;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class JobService implements IJobService {
 
     private final JobRepository jobRepository;

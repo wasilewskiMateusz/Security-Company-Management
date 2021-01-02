@@ -3,6 +3,10 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import pl.lodz.p.it.thesis.scm.dto.workplace.CreateWorkplaceDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDisabilityDTO;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceEditDTO;
@@ -21,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class WorkplaceService implements IWorkplaceService {
 
     private final WorkplaceRepository workplaceRepository;
@@ -39,7 +44,7 @@ public class WorkplaceService implements IWorkplaceService {
 
     @Override
     public List<Workplace> getAllWorkplaces() {
-       return workplaceRepository.findAll();
+        return workplaceRepository.findAll();
     }
 
     @Override

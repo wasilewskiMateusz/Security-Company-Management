@@ -3,6 +3,9 @@ package pl.lodz.p.it.thesis.scm.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.it.thesis.scm.model.Contract;
 import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.User;
@@ -16,51 +19,50 @@ import java.util.Optional;
 
 
 @Component("userSecurity")
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class UserSecurity {
 
     private final UserRepository userRepository;
     private final WorkplaceRepository workplaceRepository;
     private final JobRepository jobRepository;
-    private final ContractRepository contractRepository;
 
     @Autowired
     public UserSecurity(UserRepository userService,
-                        WorkplaceRepository workplaceRepository, JobRepository jobRepository, ContractRepository contractRepository) {
+                        WorkplaceRepository workplaceRepository, JobRepository jobRepository) {
         this.userRepository = userService;
         this.workplaceRepository = workplaceRepository;
         this.jobRepository = jobRepository;
-        this.contractRepository = contractRepository;
     }
 
     public boolean hasUserId(Authentication authentication, Long id) {
 
         String email = authentication.getName();
         if(email.equals("anonymousUser")) return false;
-        User user = userRepository.findByEmail(email);
-        return user.getId().equals(id);
+        Object userId = authentication.getCredentials();
+        return id.equals(userId);
     }
 
     public boolean isUserWorkplaceOwner(Authentication authentication, Long id) {
         String email = authentication.getName();
         if(email.equals("anonymousUser")) return false;
-        User user = userRepository.findByEmail(email);
+        Object userId = authentication.getCredentials();
 
         Optional<Workplace> workplaceOptional = workplaceRepository.findById(id);
         if(workplaceOptional.isEmpty()) return true;
         Workplace workplace = workplaceOptional.get();
 
-        return workplace.getEmployer().getId().equals(user.getId());
+        return workplace.getEmployer().getId().equals(userId);
     }
 
     public boolean isJobInUserWorkplace(Authentication authentication, Long id) {
         String email = authentication.getName();
         if(email.equals("anonymousUser")) return false;
-        User user = userRepository.findByEmail(email);
+        Object userId = authentication.getCredentials();
 
         Optional<Job> jobOptional = jobRepository.findById(id);
         if(jobOptional.isEmpty()) return true;
         Job job = jobOptional.get();
 
-        return job.getWorkplace().getEmployer().getId().equals(user.getId());
+        return job.getWorkplace().getEmployer().getId().equals(userId);
     }
 }

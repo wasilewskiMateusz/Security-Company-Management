@@ -6,17 +6,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.model.Role;
 import pl.lodz.p.it.thesis.scm.model.User;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Service("userDetailService")
-@Transactional
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class MyUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;

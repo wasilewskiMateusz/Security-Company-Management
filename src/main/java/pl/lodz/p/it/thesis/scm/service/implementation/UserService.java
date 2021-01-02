@@ -4,6 +4,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.it.thesis.scm.dto.user.*;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
@@ -17,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;

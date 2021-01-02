@@ -24,18 +24,17 @@ import java.util.List;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final MyUserDetailsService myUserDetailsService;
 
     @Autowired
-    public JwtRequestFilter(JwtUtil jwtUtil, MyUserDetailsService myUserDetailsService) {
+    public JwtRequestFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
-        this.myUserDetailsService = myUserDetailsService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         final String requestTokenHeader = httpServletRequest.getHeader("Authorization");
         String username = null;
+        Long id = null;
         String jwtToken;
         boolean isAccessToken = false;
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
@@ -44,6 +43,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtUtil.getUsernameFromToken(jwtToken);
+                id = jwtUtil.getIdFromToken(jwtToken);
                 roles = jwtUtil.getRolesFromToken(jwtToken);
                 isAccessToken = jwtUtil.isAccessToken(jwtToken);
 
@@ -58,7 +58,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = new User(username, "", roles);
 
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
+                    userDetails, id, userDetails.getAuthorities());
 
             usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);

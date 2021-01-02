@@ -3,6 +3,9 @@ package pl.lodz.p.it.thesis.scm.service.implementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.model.RefreshToken;
@@ -17,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 public class AuthenticationService implements IAuthenticationService {
 
     private final UserRepository userRepository;

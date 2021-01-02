@@ -99,7 +99,7 @@ public class RestExceptionHandler {
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<RestMessage> handleDisabledException(Exception ex, Locale locale) {
         String errorMessage = messageSource.getMessage(USER_DISABLED, null, locale);
-        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
