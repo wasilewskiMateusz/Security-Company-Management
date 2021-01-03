@@ -35,6 +35,7 @@ public class RestExceptionHandler {
     private static final String OPTIMISTIC_LOCK = "Exception.different.version";
     private static final String RESOURCE_NOT_EXIST = "Exception.resource.not.found";
     private static final String NOT_VALID = "Exception.request.not.valid";
+    private static final String EMAIL_PROBLEM = "Exception.email.problem";
 
 
     private final MessageSource messageSource;
@@ -118,6 +119,12 @@ public class RestExceptionHandler {
     public ResponseEntity<RestMessage> handleResourceNotExistException(Exception ex, Locale locale) {
         String errorMessage = messageSource.getMessage(RESOURCE_NOT_EXIST, null, locale);
         return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmailProblemException.class)
+    public ResponseEntity<RestMessage> handleEmailProblemException(Exception ex, Locale locale) {
+        String errorMessage = messageSource.getMessage(EMAIL_PROBLEM, null, locale);
+        return new ResponseEntity<>(new RestMessage(errorMessage), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 

@@ -4,12 +4,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Entity
@@ -57,6 +56,14 @@ public class User {
     @Size(min = 9, max = 9)
     @Pattern(regexp = "[0-9]+")
     private String phoneNumber;
+
+    @Column
+    @Length(min = 30, max = 30)
+    private String resetPasswordToken;
+
+    @Column
+    @Future
+    private LocalDateTime resetPasswordTokenExpirationDate;
 
     @ManyToMany
     @JoinTable(

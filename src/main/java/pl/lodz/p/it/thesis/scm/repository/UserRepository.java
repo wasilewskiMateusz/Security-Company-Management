@@ -11,4 +11,5 @@ import pl.lodz.p.it.thesis.scm.model.User;
 @Transactional(propagation = Propagation.MANDATORY, isolation = Isolation.READ_COMMITTED)
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByEmail(String email);
+    User findByResetPasswordToken(String token);
 }

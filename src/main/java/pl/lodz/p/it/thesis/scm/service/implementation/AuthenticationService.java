@@ -54,6 +54,8 @@ public class AuthenticationService implements IAuthenticationService {
         user.setLastName(userRegisterDTO.getLastName());
         user.setPhoneNumber(userRegisterDTO.getPhoneNumber());
         user.setEnabled(false);
+        user.setResetPasswordToken(null);
+        user.setResetPasswordTokenExpirationDate(null);
 
         user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_EMPLOYEE")));
         userRepository.save(user);

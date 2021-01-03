@@ -5,19 +5,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.contract.ContractDTO;
-import pl.lodz.p.it.thesis.scm.dto.job.JobDTO;
 import pl.lodz.p.it.thesis.scm.dto.user.*;
 import pl.lodz.p.it.thesis.scm.dto.workplace.WorkplaceDTO;
+import pl.lodz.p.it.thesis.scm.exception.EmailProblemException;
 import pl.lodz.p.it.thesis.scm.exception.ResourceNotExistException;
 import pl.lodz.p.it.thesis.scm.model.Contract;
-import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
-import pl.lodz.p.it.thesis.scm.service.IWorkplaceService;
+import pl.lodz.p.it.thesis.scm.util.EmailUtil;
+import pl.lodz.p.it.thesis.scm.util.RestMessage;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +31,12 @@ import java.util.Optional;
 public class UserController {
 
     private final IUserService userService;
+    private final EmailUtil emailUtil;
 
     @Autowired
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, EmailUtil emailUtil) {
         this.userService = userService;
+        this.emailUtil = emailUtil;
     }
 
     @GetMapping("{id}")
@@ -54,7 +59,7 @@ public class UserController {
 
     @PutMapping("{id}")
     public ResponseEntity<UserDTO> editUser(@Valid @RequestBody UserEditDTO userEditDTO,
-                                                     @PathVariable Long id) {
+                                            @PathVariable Long id) {
 
         User editedUser = userService.editUser(id, userEditDTO);
 
@@ -63,16 +68,26 @@ public class UserController {
 
     @PutMapping("{id}/availability")
     public ResponseEntity<UserDTO> editUserAvailability(@Valid @RequestBody UserAvailabilityDTO userAvailabilityDTO,
-                                                     @PathVariable Long id) {
+                                                        @PathVariable Long id, WebRequest request) {
 
         User editedUser = userService.changeAvailability(id, userAvailabilityDTO);
+
+        try {
+            if (editedUser.isEnabled()) {
+                emailUtil.sendEnabledEmail(editedUser.getEmail(), request.getLocale());
+            } else {
+                emailUtil.sendDisabledEmail(editedUser.getEmail(), request.getLocale());
+            }
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new EmailProblemException();
+        }
 
         return ResponseEntity.ok(new UserDTO(editedUser));
     }
 
     @PutMapping("{id}/password")
     public ResponseEntity<UserDTO> editUserPassword(@Valid @RequestBody UserPasswordDTO userPasswordDTO,
-                                                        @PathVariable Long id) {
+                                                    @PathVariable Long id) {
 
         User editedUser = userService.changePassword(id, userPasswordDTO);
 
@@ -81,7 +96,7 @@ public class UserController {
 
     @PutMapping("{id}/own-password")
     public ResponseEntity<UserDTO> editOwnPassword(@Valid @RequestBody UserOwnPasswordDTO userOwnPasswordDTO,
-                                                 @PathVariable Long id) {
+                                                   @PathVariable Long id) {
 
         User editedUser = userService.changeOwnPassword(id, userOwnPasswordDTO);
 
@@ -90,7 +105,7 @@ public class UserController {
 
     @PutMapping("{id}/roles")
     public ResponseEntity<UserDTO> editUserRoles(@Valid @RequestBody UserRoleDTO userRoleDTO,
-                                                    @PathVariable Long id) {
+                                                 @PathVariable Long id) {
 
         User editedUser = userService.changeRoles(id, userRoleDTO);
 

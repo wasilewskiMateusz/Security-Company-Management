@@ -1,5 +1,6 @@
 package pl.lodz.p.it.thesis.scm.service.implementation;
 
+import net.bytebuddy.utility.RandomString;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +16,7 @@ import pl.lodz.p.it.thesis.scm.repository.RoleRepository;
 import pl.lodz.p.it.thesis.scm.repository.UserRepository;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -124,6 +126,38 @@ public class UserService implements IUserService {
         User user = userOptional.get();
 
         return new ArrayList<>(user.getContracts());
+    }
+
+    @Override
+    public String updateResetPasswordToken(String email) {
+        User user = userRepository.findByEmail(email);
+        if(user != null) {
+            String token = RandomString.make(30);
+            user.setResetPasswordToken(token);
+            user.setResetPasswordTokenExpirationDate(LocalDateTime.now().plusMinutes(5));
+            userRepository.save(user);
+            return token;
+        }
+        else {
+            throw new RestException("Exception.user.with.this.email.not.exist");
+        }
+    }
+
+    @Override
+    public void updateResetPassword(UserResetPasswordTokenDTO userResetPasswordTokenDTO) {
+        User user = userRepository.findByResetPasswordToken(userResetPasswordTokenDTO.getToken());
+        if(user != null) {
+            if(user.getResetPasswordTokenExpirationDate().isBefore(LocalDateTime.now())){
+                throw new RestException("Exception.token.expired");
+            }
+            user.setPassword(passwordEncoder.encode(userResetPasswordTokenDTO.getPassword()));
+            user.setResetPasswordToken(null);
+            user.setResetPasswordTokenExpirationDate(null);
+            userRepository.save(user);
+        }
+        else {
+            throw new RestException("Exception.token.not.valid");
+        }
     }
 
 

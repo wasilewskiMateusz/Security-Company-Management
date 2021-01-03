@@ -2,7 +2,6 @@ package pl.lodz.p.it.thesis.scm.service;
 
 import pl.lodz.p.it.thesis.scm.dto.user.*;
 import pl.lodz.p.it.thesis.scm.model.Contract;
-import pl.lodz.p.it.thesis.scm.model.Job;
 import pl.lodz.p.it.thesis.scm.model.User;
 import pl.lodz.p.it.thesis.scm.model.Workplace;
 
@@ -23,4 +22,7 @@ public interface IUserService {
     List<Workplace> getUserWorkplaces(Long id);
 
     List<Contract> getUserContracts(Long id);
+
+    String updateResetPasswordToken(String email);
+    void updateResetPassword(UserResetPasswordTokenDTO userResetPasswordTokenDTO);
 }

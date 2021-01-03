@@ -10,23 +10,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 import pl.lodz.p.it.thesis.scm.dto.requests.JwtRefreshRequest;
 import pl.lodz.p.it.thesis.scm.dto.user.UserAuthenticateDTO;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtAuthenticateResponse;
 import pl.lodz.p.it.thesis.scm.dto.responses.JwtRefreshResponse;
 import pl.lodz.p.it.thesis.scm.dto.user.UserRegisterDTO;
+import pl.lodz.p.it.thesis.scm.dto.user.UserResetPasswordTokenDTO;
+import pl.lodz.p.it.thesis.scm.exception.EmailProblemException;
 import pl.lodz.p.it.thesis.scm.exception.RestException;
 import pl.lodz.p.it.thesis.scm.security.MyUserDetailsService;
 import pl.lodz.p.it.thesis.scm.service.IAuthenticationService;
 import pl.lodz.p.it.thesis.scm.service.IUserService;
+import pl.lodz.p.it.thesis.scm.util.EmailUtil;
 import pl.lodz.p.it.thesis.scm.util.JwtUtil;
 import pl.lodz.p.it.thesis.scm.util.RestMessage;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -39,23 +42,30 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
     private final MyUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
+    private final EmailUtil emailUtil;
 
 
     @Autowired
     public AuthenticationController(IUserService userService, IAuthenticationService authenticationService,
                                     AuthenticationManager authenticationManager,
                                     MyUserDetailsService userDetailsService,
-                                    JwtUtil jwtUtil) {
+                                    JwtUtil jwtUtil, EmailUtil emailUtil) {
         this.userService = userService;
         this.authenticationService = authenticationService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
+        this.emailUtil = emailUtil;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RestMessage> registerNewUserAccount(@Valid @RequestBody UserRegisterDTO userRegisterDTO) {
+    public ResponseEntity<RestMessage> registerNewUserAccount(@Valid @RequestBody UserRegisterDTO userRegisterDTO, WebRequest webRequest) {
         authenticationService.registerNewUserAccount(userRegisterDTO);
+        try {
+            emailUtil.sendRegistrationEmail(userRegisterDTO.getEmail(), webRequest.getLocale());
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new EmailProblemException();
+        }
         return ResponseEntity.ok(new RestMessage("Success"));
     }
 
@@ -102,6 +112,25 @@ public class AuthenticationController {
         username = jwtUtil.getUsernameFromToken(accessToken.substring(7));
         authenticationService.logout(jwtRefreshRequest.getRefreshToken(), username);
 
+        return ResponseEntity.ok(new RestMessage("Success"));
+    }
+
+    @PostMapping("/forgot_password/{email}")
+    public ResponseEntity<RestMessage> processForgotPassword(@PathVariable String email, WebRequest webRequest) {
+        String token = userService.updateResetPasswordToken(email);
+        String resetPasswordLink = "https://localhost:4200/reset_password?token=" + token;
+        try {
+            emailUtil.sendResetEmail(email, resetPasswordLink, webRequest.getLocale());
+        } catch (UnsupportedEncodingException | MessagingException e) {
+            throw new EmailProblemException();
+        }
+
+        return ResponseEntity.ok(new RestMessage("Success"));
+    }
+
+    @PostMapping("/reset_password")
+    public ResponseEntity<RestMessage> processResetPassword(@Valid @RequestBody UserResetPasswordTokenDTO userResetPasswordTokenDTO) {
+        userService.updateResetPassword(userResetPasswordTokenDTO);
         return ResponseEntity.ok(new RestMessage("Success"));
     }
 
