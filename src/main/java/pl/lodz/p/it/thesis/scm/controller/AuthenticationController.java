@@ -118,7 +118,7 @@ public class AuthenticationController {
     @PostMapping("/forgot_password/{email}")
     public ResponseEntity<RestMessage> processForgotPassword(@PathVariable String email, WebRequest webRequest) {
         String token = userService.updateResetPasswordToken(email);
-        String resetPasswordLink = "https://localhost:4200/reset_password?token=" + token;
+        String resetPasswordLink = "https://localhost:4200/reset-password?token=" + token;
         try {
             emailUtil.sendResetEmail(email, resetPasswordLink, webRequest.getLocale());
         } catch (UnsupportedEncodingException | MessagingException e) {
