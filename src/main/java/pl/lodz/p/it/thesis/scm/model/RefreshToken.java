@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString(exclude="user")
 @EqualsAndHashCode(exclude="user")
+@Table(name="refresh_token")
 public class RefreshToken {
 
     @Id

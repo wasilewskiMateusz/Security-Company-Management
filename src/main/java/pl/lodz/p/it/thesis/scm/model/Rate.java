@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 @ToString(exclude= {"workplace", "user"})
 @EqualsAndHashCode(exclude= {"workplace", "user"})
 @NoArgsConstructor
+@Table(name="rate")
 public class Rate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

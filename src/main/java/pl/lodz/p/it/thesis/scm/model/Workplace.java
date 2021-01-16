@@ -17,6 +17,7 @@ import java.util.Collection;
 @ToString(exclude= {"rates", "jobs"})
 @EqualsAndHashCode(exclude= {"rates", "jobs"})
 @SecondaryTable(name = "address")
+@Table(name="workplace")
 public class Workplace {
 
     @Id

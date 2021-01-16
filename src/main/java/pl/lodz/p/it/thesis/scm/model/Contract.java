@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @ToString(exclude= {"status", "employee","job"})
 @EqualsAndHashCode(exclude= {"status", "employee","job"})
 @NoArgsConstructor
+@Table(name="contract")
 public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

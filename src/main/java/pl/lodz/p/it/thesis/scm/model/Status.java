@@ -12,6 +12,7 @@ import java.util.Collection;
 @Entity
 @ToString(exclude= {"contracts"})
 @EqualsAndHashCode(exclude= {"contracts"})
+@Table(name="status")
 public class Status {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

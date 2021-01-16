@@ -13,6 +13,7 @@ import java.util.Collection;
 @Entity
 @ToString(exclude= {"workplace", "contracts"})
 @EqualsAndHashCode(exclude= {"workplace", "contracts"})
+@Table(name="job")
 public class Job {
 
     @Id

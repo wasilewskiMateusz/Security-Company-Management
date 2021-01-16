@@ -14,6 +14,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @ToString(exclude= {"users"})
 @EqualsAndHashCode(exclude= {"users"})
+@Table(name="role")
 public class Role {
 
     @Id

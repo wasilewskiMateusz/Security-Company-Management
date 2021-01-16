@@ -17,6 +17,7 @@ import java.util.Collection;
 @ToString(exclude= {"refreshTokens", "roles", "workplaces"})
 @EqualsAndHashCode(exclude= {"refreshTokens", "roles", "workplaces"})
 @SecondaryTable(name = "personal_data")
+@Table(name="\"user\"")
 public class User {
 
     @Id
